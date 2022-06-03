@@ -1,19 +1,18 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/stb_image.h>
+#include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/lib/stb_image/stb_image.h>
 #include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/shader.h>
 
 //#include "rubik.h"
 #include <thread>
 #include <chrono>
-#include "cube.h"
 
+#include "cube.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
-
 
 using glm::vec4;
 
@@ -28,6 +27,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 const std::string CURRENT_PATH = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/";
+
 
 // camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -327,7 +327,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {        
         //cube_2.rotation(true);
         cube_1.rotation(20.0f);
-        cube_2.rotation(20.0f);
-        
+        cube_2.rotation(20.0f);        
     }
 }

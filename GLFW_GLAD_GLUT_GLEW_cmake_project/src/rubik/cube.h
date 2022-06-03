@@ -12,19 +12,19 @@ class Cube {
 public:
     char cube_id;        
     std::vector<float> vertex;
-    
-    
+        
     Cube(char cube_id, std::vector<char> colors);
-
+    
     void translation(glm::vec3 move_to);
     void rotation(float angle);
+
 private:
     void set_colors(std::vector<char> colors);
 };
 
 Cube::Cube(char cube_id, std::vector<char> colors) {
-    this->cube_id = cube_id;
     this->vertex = default_values::vertex;
+    this->cube_id = cube_id;
     set_colors(colors);
 }
 
