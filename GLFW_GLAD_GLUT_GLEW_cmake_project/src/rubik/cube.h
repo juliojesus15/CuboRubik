@@ -61,8 +61,8 @@ void Cube::translation(glm::vec3 move_to) {
 }
 
 void Cube::rotation(float angle) {
-    //glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime() * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+    //glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime() * glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f),angle, glm::vec3(1.0f, 0.0f, 0.0f));
     for (float i = 0; i < vertex.size(); i += 6) {
         glm::vec4 result = model * glm::vec4(vertex[i], vertex[i + 1], vertex[i + 2], 1.0f);
         vertex[i] = result.x;

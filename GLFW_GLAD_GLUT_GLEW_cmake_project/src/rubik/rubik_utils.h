@@ -54,10 +54,12 @@ namespace rubik_utils {
         Groups group;
         group['B'] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
         group['F'] = {'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        group['U'] = {'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        group['D'] = {'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        group['L'] = {'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        group['R'] = {'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
+        group['U'] = {'R', 'S', 'T', 'J', 'K', 'L', 'A', 'B', 'C'};        
+        group['D'] = {'X', 'Y', 'Z', 'O', 'P', 'Q', 'G', 'H', 'I'};
+        
+        group['L'] = {'R', 'U', 'X', 'J', 'M', 'O', 'A', 'D', 'G'};
+        group['R'] = {'T', 'W', 'Z', 'L', 'N', 'Q', 'C', 'F', 'I'};
         return group;
     }
 }

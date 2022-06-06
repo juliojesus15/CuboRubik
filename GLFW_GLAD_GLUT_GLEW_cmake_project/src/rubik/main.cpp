@@ -4,11 +4,14 @@
 #include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/lib/stb_image/stb_image.h>
 #include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/shader.h>
 
-//#include "rubik.h"
+#include "rubik.h"
+#include "solver.h"
+
+
 #include <thread>
 #include <chrono>
 
-#include "cube.h"
+//#include "cube.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -29,6 +32,9 @@ const unsigned int SCR_HEIGHT = 600;
 const std::string CURRENT_PATH = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/";
 
 
+Solver solver;
+
+
 // camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -46,13 +52,20 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 
-Cube cube_1('A', std::vector<char>({ 'O', 'B', 'W' }));
-Cube cube_2('B', std::vector<char>({ 'B', 'W' }));
-Cube cube_3('C', std::vector<char>({ 'B', 'R', 'W' }));
+Cube cube_1('A', std::vector<char>({ 'O', 'B', 'W', 'R', 'G'}));
+Cube cube_2('B', std::vector<char>({ 'B', 'O', 'R', 'G' }));
+Cube cube_3('C', std::vector<char>({ 'B', 'Y', 'O', 'R', 'G' }));
+
+RubikCube rubik;
+const int num_cubes = 26;
+
+bool flag_rotation = false;
 
 int main()
 {    
-    //std::string current_path = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/";
+   
+    solver.get_steps(true);
+    //solver.get_htpp_steps();
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -104,17 +117,17 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     
+    /*
     
-
     std::vector<glm::vec3> pos = {
-        glm::vec3(-0.40f,  0.50f, -0.40f), glm::vec3(0.65f,  0.50f, -0.40f), glm::vec3(1.70f,  0.50f, -0.40f)
+        glm::vec3(-0.40f,  0.50f, -0.40f), glm::vec3(-0.40f, -0.55f, -0.40f), glm::vec3(-0.40f, -1.60f, -0.40f)
     };
 
     unsigned int VBO[3], VAO[3];
     glGenVertexArrays(3, VAO);
     glGenBuffers(3, VBO);
 
-    cube_1.translation(pos[0]);
+    //cube_1.translation(pos[0]);
     //Cube 1
     glBindVertexArray(VAO[0]);
     glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
@@ -129,6 +142,8 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    
+    
     cube_2.translation(pos[1]);
     //Cube2
     glBindVertexArray(VAO[1]);
@@ -143,27 +158,38 @@ int main()
     // color coord attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    //Cube 3
     
+    cube_3.translation(pos[2]);
+    //Cube 3
+    glBindVertexArray(VAO[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube_3.vertex.size(), static_cast<void*>(cube_3.vertex.data()), GL_STATIC_DRAW);
 
-    /*
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // color coord attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    
+    */
+    
     const int num_cubes = 26;
     RubikCube rubik;
     
-    unsigned int VBO[num_cubes], VAO[num_cubes], EBO[num_cubes];
+    unsigned int VBO[num_cubes], VAO[num_cubes];
     glGenVertexArrays(num_cubes, VAO);
     glGenBuffers(num_cubes, VBO);
-    glGenBuffers(num_cubes, EBO);
     
     int i = 0;
     for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+        //std::cout << i <<" Debugger 3000" << std::endl;
         glBindVertexArray(VAO[i]);
         glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float)* iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[i]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)* iter->second->index.size(), static_cast<void*>(iter->second->index.data()), GL_STATIC_DRAW);
-
+        
         // position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
@@ -173,7 +199,7 @@ int main()
         glEnableVertexAttribArray(1);
         i++;        
     }
-    */
+    
     
     // render loop
     // -----------
@@ -194,6 +220,8 @@ int main()
         glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+        // render boxes        
         // activate shader
         ourShader.use();
 
@@ -204,34 +232,61 @@ int main()
         // camera/view transformation
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         ourShader.setMat4("view", view);
+        
 
-        // render boxes        
-        /*
-        for (int i = 0; i < num_cubes; i++) {
+        
+        //rubik.move_left_group((float)glfwGetTime());
+        int i = 0;
+        for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
             glBindVertexArray(VAO[i]);
-            glDrawElements(GL_TRIANGLES,36, GL_UNSIGNED_INT, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);                
+            i++;
         }
-        */
+        
+        
+        for (int j = 0; j < num_cubes; j++) {
+            glBindVertexArray(VAO[j]);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+        
+
+  
+        
+              
         //cube_1.rotation(20.0f);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, pos[0]);
-        cube_1.rotation(20.0f);
-        cube_2.rotation(20.0f);
+        //cube_2.rotation(20.0f);
+        //cube_3.rotation(20.0f);
 
         //glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube_1.vertex.size(), static_cast<void*>(cube_1.vertex.data()), GL_STATIC_DRAW);
         
-        glBindVertexArray(VAO[0]);
+        //glBindVertexArray(VAO[0]);
+        /*
+        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        model = glm::translate(model, pos[0]);
+        float angle = 20.0f;
+        model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+        ourShader.setMat4("model", model);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        */
+
 
         //cube_2.rotation(true);
         //glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube_2.vertex.size(), static_cast<void*>(cube_2.vertex.data()), GL_STATIC_DRAW);
         
-        glBindVertexArray(VAO[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glBindVertexArray(VAO[1]);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        //std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        //glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube_3.vertex.size(), static_cast<void*>(cube_3.vertex.data()), GL_STATIC_DRAW);
+
+        //glBindVertexArray(VAO[2]);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        //std::this_thread::sleep_for(std::chrono::milliseconds(270));
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -325,8 +380,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_Z && action == GLFW_PRESS) {        
-        //cube_2.rotation(true);
-        cube_1.rotation(20.0f);
-        cube_2.rotation(20.0f);        
+        flag_rotation = true;
     }
 }
