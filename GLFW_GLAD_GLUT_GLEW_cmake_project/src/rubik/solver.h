@@ -7,8 +7,6 @@
 #include<iostream>
 #include <vector>
 
-
-
 class Solver {
 public:
     //Solver
