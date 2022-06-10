@@ -18,32 +18,15 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-// camera
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 bool firstMouse = true;
-float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float fov = 45.0f;
-
-
-// timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;	
 float lastFrame = 0.0f;
 
-
-
-//Camera camera;
+Camera camera;
 RubikCube rubik;
 
 unsigned int VBO[params::CUBES], VAO[params::CUBES];
-// camera
-bool move_camara_right = false;
-bool move_camara_left = false;
 
 //Render transformation
 void processing_group(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id) {
@@ -70,13 +53,7 @@ void processing_group(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[]
     }    
 }
 
-
-int main()
-{
-    //Camera
-    //camera.define_perspective();
-    //camera.define_view();
-
+int main() {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -108,8 +85,7 @@ int main()
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
@@ -117,12 +93,8 @@ int main()
     // configure params opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-
-    // build and compile our shader zprogram
-    // ------------------------------------
-
+    
     Shader ourShader(params::vertex_shader, params::fragment_shader);
-
     
     glGenVertexArrays(params::CUBES, VAO);
     glGenBuffers(params::CUBES, VBO);
@@ -143,46 +115,24 @@ int main()
         i++;
     }
 
-    ourShader.use();
-    //ourShader.setMat4("projection", camera.projection);
-    //ourShader.setMat4("view", camera.view);
+    while (!glfwWindowShouldClose(window)) {
 
-    while (!glfwWindowShouldClose(window))
-    {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        // -----
         processInput(window);
 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         
-        ourShader.use();
-        /*
-        if (move_camara_right) {
-            camera.update_view(true);
-            ourShader.setMat4("view", camera.view);
-            move_camara_right = false;
-        }
-        else if (move_camara_left) {
-            camera.update_view(false);
-            ourShader.setMat4("view", camera.view);
-            move_camara_left = false;
-        }
-        */
-        // pass projection matrix to shader (note that in this case it could change every frame)
-        glm::mat4 projection = glm::perspective(glm::radians(fov), (float)params::SCR_WIDTH / (float)params::SCR_HEIGHT, 0.1f, 100.0f);
-        ourShader.setMat4("projection", projection);
+        camera.update_perspective();
+        camera.update_view();
 
-        // camera/view transformation
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        ourShader.setMat4("view", view);
+        ourShader.use();
+        ourShader.setMat4("projection", camera.projection);
+        ourShader.setMat4("view", camera.view);
+
         for (int j = 0; j < params::CUBES; j++) {
             glBindVertexArray(VAO[j]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -199,35 +149,26 @@ int main()
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
-{
+void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    //Movimientos camara
-    
     float cameraSpeed = static_cast<float>(2.5 * deltaTime);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        camera.move_up(cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        camera.move_down(cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.move_left(cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    
+        camera.move_right(cameraSpeed);    
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {    
     if (key == GLFW_KEY_Q && action == GLFW_PRESS)
         processing_group(window, VBO, VAO, 'L');
     else if (key == GLFW_KEY_E && action == GLFW_PRESS)
@@ -239,59 +180,23 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
         processing_group(window, VBO, VAO, 'T');
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'D');
-    
+        processing_group(window, VBO, VAO, 'D');    
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
+    float x_pos = static_cast<float>(xposIn);
+    float y_pos = static_cast<float>(yposIn);
+    
+    if (firstMouse) {
+        camera.mouse_x = x_pos;
+        camera.mouse_y = y_pos;
         firstMouse = false;
     }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f; // change this value to your liking
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
+    
+    camera.update_mouse_position(x_pos, y_pos);
+    camera.update_target();
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    fov -= (float)yoffset;
-    if (fov < 1.0f)
-        fov = 1.0f;
-    if (fov > 45.0f)
-        fov = 45.0f;
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    camera.update_fov((float)yoffset);
 }
-
-
