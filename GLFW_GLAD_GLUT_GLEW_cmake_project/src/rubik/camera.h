@@ -44,12 +44,12 @@ Camera::Camera() {
 }
 
 void Camera::define_perspective() {	
-	this->projection = glm::perspective(this->zoom, (float)global::SCR_WIDTH / (float)global::SCR_HEIGHT, 0.1f, 100.0f);
+	this->projection = glm::perspective(this->zoom, (float)tools::SCR_WIDTH / (float)tools::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::update_perspective(float zoom) {	
 	this->zoom = glm::radians(zoom);
-	this->projection = glm::perspective(this->zoom, (float)global::SCR_WIDTH / (float)global::SCR_HEIGHT, 0.1f, 100.0f);	
+	this->projection = glm::perspective(this->zoom, (float)tools::SCR_WIDTH / (float)tools::SCR_HEIGHT, 0.1f, 100.0f);	
 }
 
 void Camera::define_view() {		

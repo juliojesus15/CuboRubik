@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "default_values.h"
+#include "value.h"
 #include "color.h"
 
 class Cube {
@@ -25,7 +25,7 @@ private:
 };
 
 Cube::Cube(char cube_id, std::vector<char> colors) {
-    this->vertex = default_values::vertex;
+    this->vertex = values::vertex;
     this->cube_id = cube_id;
     set_colors(colors);
 }

@@ -22,6 +22,8 @@ void processInput(GLFWwindow* window);
 Camera camera;
 RubikCube rubik;
 
+int timing = 40;
+
 // camera
 bool move_camara_right = false;
 bool move_camara_left = false;
@@ -32,6 +34,7 @@ bool front = false;
 bool bottom = false;
 bool top = false;
 bool down = false;
+
 
 int main()
 {
@@ -54,7 +57,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(global::SCR_WIDTH, global::SCR_HEIGHT, "Comp. Grafica - Rubik", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(tools::SCR_WIDTH, tools::SCR_HEIGHT, "Comp. Grafica - Rubik", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -73,18 +76,18 @@ int main()
         return -1;
     }
 
-    // configure global opengl state
+    // configure tools opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader zprogram
     // ------------------------------------
 
-    Shader ourShader(global::vertex_shader, global::fragment_shader);
+    Shader ourShader(tools::vertex_shader, tools::fragment_shader);
 
-    unsigned int VBO[global::CUBES], VAO[global::CUBES];
-    glGenVertexArrays(global::CUBES, VAO);
-    glGenBuffers(global::CUBES, VBO);
+    unsigned int VBO[tools::CUBES], VAO[tools::CUBES];
+    glGenVertexArrays(tools::CUBES, VAO);
+    glGenBuffers(tools::CUBES, VBO);
 
     int i = 0;
     for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
@@ -140,12 +143,12 @@ int main()
                     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);                    
                     k++;
                 }             
-                for (int j = 0; j < global::CUBES; j++) {
+                for (int j = 0; j < tools::CUBES; j++) {
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));                
+                tools::sleep(timing);
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
@@ -166,7 +169,7 @@ int main()
                     k++;
                 }
 
-                for (int j = 0; j < global::CUBES; j++) {
+                for (int j = 0; j < tools::CUBES; j++) {
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
@@ -192,7 +195,7 @@ int main()
                     k++;
                 }
 
-                for (int j = 0; j < global::CUBES; j++) {
+                for (int j = 0; j < tools::CUBES; j++) {
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
@@ -218,7 +221,7 @@ int main()
                     k++;
                 }
 
-                for (int j = 0; j < global::CUBES; j++) {
+                for (int j = 0; j < tools::CUBES; j++) {
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
@@ -244,7 +247,7 @@ int main()
                     k++;
                 }
 
-                for (int j = 0; j < global::CUBES; j++) {
+                for (int j = 0; j < tools::CUBES; j++) {
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
@@ -269,7 +272,7 @@ int main()
                 k++;
             }
 
-            for (int j = 0; j < global::CUBES; j++) {
+            for (int j = 0; j < tools::CUBES; j++) {
                 glBindVertexArray(VAO[j]);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
@@ -281,7 +284,7 @@ int main()
         down = false;
         }
 
-        for (int j = 0; j < global::CUBES; j++) {
+        for (int j = 0; j < tools::CUBES; j++) {
             glBindVertexArray(VAO[j]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -294,8 +297,8 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(global::CUBES, VAO);
-    glDeleteBuffers(global::CUBES, VBO);
+    glDeleteVertexArrays(tools::CUBES, VAO);
+    glDeleteBuffers(tools::CUBES, VBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -326,7 +329,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_Q && action == GLFW_PRESS) left = true;    
+    if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+        left = true;
+    }
     else if (key == GLFW_KEY_E && action == GLFW_PRESS) right = true;
     else if (key == GLFW_KEY_Z && action == GLFW_PRESS) front = true;
     else if (key == GLFW_KEY_C && action == GLFW_PRESS) bottom = true;
