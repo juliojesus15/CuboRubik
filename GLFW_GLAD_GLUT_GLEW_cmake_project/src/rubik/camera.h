@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <iostream>
+
 #include "global.h"
 
 class Camera {
@@ -16,7 +17,7 @@ public:
 	Camera();
 
 	void define_perspective();
-	void update_perspective(float zoom);	
+	void update_perspective(float zoom);
 	
 	void define_view();
 	void update_view(bool flag);	
@@ -37,7 +38,7 @@ Camera::Camera() {
 	
 	this->zoom = glm::radians(45.0f);
 		
-	this->camera_pos = glm::vec3(0.0f, 0.0f, 5.0f);
+	this->camera_pos = glm::vec3(0.0f, 0.0f, 15.0f);
 	this->camera_target = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
 }
@@ -58,9 +59,9 @@ void Camera::define_view() {
 void Camera::update_view(bool flag) {	
 	float dir = flag ? (1.0f) : (-1.0f);
 	
-	float camX = static_cast<float>(sin(counter_axis_x * dir) * 5.0f);
-	float camZ = static_cast<float>(cos(counter_axis_x * dir) * 5.0f);
-			
+	float camX = static_cast<float>(sin(counter_axis_x * dir) * 15.0f);
+	float camZ = static_cast<float>(cos(counter_axis_x * dir) * 15.0f);
+
 	this->counter_axis_x += + 0.001f;
 	
 	this->camera_pos = glm::vec3(camX, 0.0f, camZ);

@@ -11,6 +11,11 @@ public:
 	RubikCube();
 
 	void move_left_group(float a);
+	void move_right_group(float a);
+
+	void move_group(char group_id);
+	
+	void view_cubes();
 };
  
 RubikCube::RubikCube() {	
@@ -35,10 +40,34 @@ void RubikCube::move_left_group(float a) {
 	std::vector<char> cube_ids = groups['L'];
 
 	for (int i = 0; i < cube_ids.size(); i++) {
-		std::cout << cube_ids[i] << std::endl;
+		//std::cout << cube_ids[i] << std::endl;
 		Cube *tmp = cubes[cube_ids[i]];
 		tmp->rotation(a);
-
 	}
 }
+
+void RubikCube::move_right_group(float a) {
+	std::vector<char> cube_ids = groups['R'];
+
+	for (int i = 0; i < cube_ids.size(); i++) {
+		//std::cout << cube_ids[i] << std::endl;
+		Cube* tmp = cubes[cube_ids[i]];
+		tmp->rotation(a);
+	}
+}
+
+void RubikCube::move_group(char group_id) {
+	std::vector<char> cube_ids = groups[group_id];
+	for (int i = 0; i < cube_ids.size(); i++) {		
+		Cube* tmp = cubes[cube_ids[i]];
+		tmp->rotation(1.0f);
+	}
+}
+
+void RubikCube::view_cubes() {
+	for (auto iter = cubes.begin(); iter != cubes.end(); ++iter) {
+		iter->second->print();
+	}
+}
+
 #endif
