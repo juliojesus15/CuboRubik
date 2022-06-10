@@ -6,7 +6,6 @@
 #include <iostream>
 
 namespace params {
-    // settings
     const unsigned int SCR_WIDTH = 800;
     const unsigned int SCR_HEIGHT = 600;
     
@@ -14,14 +13,9 @@ namespace params {
     std::string fragment_shader = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/fragment_shader.fs";
 
     const int CUBES = 26;
-
-    const int TIMING = 40;
-
-    void sleep() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(TIMING));
-    }
+    
+    void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(40)); }
 
 }
-
 
 #endif

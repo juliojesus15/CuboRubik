@@ -9,17 +9,14 @@ typedef std::map<char, Cube* > Cubes;
 
 class RubikCube {
 public:
-	int num_cubes;
 	Cubes cubes;
 	group::VecGroup groups;
 
-	RubikCube();
-	
+	RubikCube();	
 	void move_group(char group_id);	
 };
  
 RubikCube::RubikCube() {	
-
 	std::vector<char> ids = values::cube_ids;
 	std::vector<glm::vec3> positions = values::cube_positions;
 	std::vector<std::vector<char> > colors = values::cube_colors;
@@ -29,9 +26,7 @@ RubikCube::RubikCube() {
 		tmp_cube->translation(positions[i]);
 		this->cubes[ids[i]] = tmp_cube;
 	}
-
-	this->groups = group::default_groups();
-	this->num_cubes = ids.size();
+	this->groups = group::default_groups();	
 }
 
 

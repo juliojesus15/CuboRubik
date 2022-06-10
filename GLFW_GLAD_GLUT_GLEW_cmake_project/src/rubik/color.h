@@ -33,12 +33,12 @@ namespace color {
 
     MapCode define_codes() {
         MapCode codes;
-        codes['W'] = { 1.00f, 1.00f, 1.00f };
-        codes['O'] = { 1.00f, 0.34f, 0.00f };
-        codes['G'] = { 0.00f, 0.61f, 0.27f };
-        codes['R'] = { 0.72f, 0.04f, 0.19f };
-        codes['B'] = { 0.00f, 0.26f, 0.68f };
-        codes['Y'] = { 1.00f, 0.83f, 0.00f };
+        codes['W'] = { 1.00f, 1.00f, 1.00f }; // White
+        codes['O'] = { 1.00f, 0.34f, 0.00f }; // Orange
+        codes['G'] = { 0.00f, 0.61f, 0.27f }; // Green
+        codes['R'] = { 0.72f, 0.04f, 0.19f }; // Red
+        codes['B'] = { 0.00f, 0.26f, 0.68f }; // Blue
+        codes['Y'] = { 1.00f, 0.83f, 0.00f }; // Yellow
         return codes;
     } 
 }

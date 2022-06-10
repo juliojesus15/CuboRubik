@@ -5,7 +5,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
 
-#include <iostream>
 #include <vector>
 #include <map>
 

@@ -2,22 +2,17 @@
 #include <GLFW/glfw3.h>
 
 #include "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/stb_image.h"
-#include <C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/shader.h>
 
+#include "shader.h"
 #include "camera.h"
 #include "params.h"
 #include "rubik.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-
 
 bool firstMouse = true;
 float deltaTime = 0.0f;	
@@ -27,6 +22,13 @@ Camera camera;
 RubikCube rubik;
 
 unsigned int VBO[params::CUBES], VAO[params::CUBES];
+
+void draw_cubes() {
+    for (int j = 0; j < params::CUBES; j++) {
+        glBindVertexArray(VAO[j]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+}
 
 //Render transformation
 void processing_group(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id) {
@@ -42,11 +44,7 @@ void processing_group(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[]
             k++;
         }
 
-        for (int j = 0; j < params::CUBES; j++) {
-            glBindVertexArray(VAO[j]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-
+        draw_cubes();
         params::sleep();
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -116,7 +114,6 @@ int main() {
     }
 
     while (!glfwWindowShouldClose(window)) {
-
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -132,12 +129,9 @@ int main() {
         ourShader.use();
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
+     
+        draw_cubes();
 
-        for (int j = 0; j < params::CUBES; j++) {
-            glBindVertexArray(VAO[j]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-                
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
