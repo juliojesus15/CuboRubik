@@ -29,9 +29,9 @@ bool move_camara_left = false;
 bool left = false;
 bool right = false;
 bool front = false;
-bool back = false;
-bool top = false;
 bool bottom = false;
+bool top = false;
+bool down = false;
 
 int main()
 {
@@ -126,30 +126,13 @@ int main()
             move_camara_left = false;
         }
 
-        /*
-        int partes = 0;
-	while (partes != angulo/9) {
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-				RUBIK[face[i][j]]->rotar(rotar, angulo/10);
-		bind();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		display(window); 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-		partes++;
-		_sleep(10);
-	}
-        */
-        //rubik.move_left_group(1.0f);
         
+        // Movimiento: Left        
         if (left) {
-            for (int i = 0; i < 9; i++) {
-
-                //std::cout << "Test: " << i << std::endl;
-                
-                rubik.move_left_group(1.0f);
+            for (int i = 0; i < 9; i++) {                
+                rubik.move_group('L');
                 int k = 0;
+
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
@@ -161,33 +144,147 @@ int main()
                     glBindVertexArray(VAO[j]);
                     glDrawArrays(GL_TRIANGLES, 0, 36);
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));                
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));                
                 glfwSwapBuffers(window);
                 glfwPollEvents();
             }
-            //rubik.move_left_group(1.0f);
             left = false;
         }
         
-        if (right) {
-            rubik.move_right_group(90.0f);
+        // Movimiento: Right
+        else if (right) {
+            for (int i = 0; i < 9; i++) {
+                rubik.move_group('R');
+                int k = 0;
+
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+                    k++;
+                }
+
+                for (int j = 0; j < global::CUBES; j++) {
+                    glBindVertexArray(VAO[j]);
+                    glDrawArrays(GL_TRIANGLES, 0, 36);
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                glfwSwapBuffers(window);
+                glfwPollEvents();
+            }
             right = false;
         }
 
-        /*
-        int i = 0;
-        for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
-            //glBindVertexArray(VAO[i]);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
-            i++;
-        }*/
+        // Movimiento: Front
+        else if (front) {
+            for (int i = 0; i < 9; i++) {
+                rubik.move_group('F');
+                int k = 0;
+
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+                    k++;
+                }
+
+                for (int j = 0; j < global::CUBES; j++) {
+                    glBindVertexArray(VAO[j]);
+                    glDrawArrays(GL_TRIANGLES, 0, 36);
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                glfwSwapBuffers(window);
+                glfwPollEvents();
+            }
+            front = false;
+        }
+
+        // Movimiento: Bottom
+        else if (bottom) {
+            for (int i = 0; i < 9; i++) {
+                rubik.move_group('B');
+                int k = 0;
+
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+                    k++;
+                }
+
+                for (int j = 0; j < global::CUBES; j++) {
+                    glBindVertexArray(VAO[j]);
+                    glDrawArrays(GL_TRIANGLES, 0, 36);
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                glfwSwapBuffers(window);
+                glfwPollEvents();
+            }
+            bottom = false;
+        }
+        
+        // Movimiento: Top
+        else if (top) {
+            for (int i = 0; i < 9; i++) {
+                rubik.move_group('T');
+                int k = 0;
+
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+                    glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+                    k++;
+                }
+
+                for (int j = 0; j < global::CUBES; j++) {
+                    glBindVertexArray(VAO[j]);
+                    glDrawArrays(GL_TRIANGLES, 0, 36);
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                glfwSwapBuffers(window);
+                glfwPollEvents();
+            }
+            top = false;
+        }
+
+        else if (down) {
+        for (int i = 0; i < 9; i++) {
+            rubik.move_group('B');
+            int k = 0;
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
+                glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+                k++;
+            }
+
+            for (int j = 0; j < global::CUBES; j++) {
+                glBindVertexArray(VAO[j]);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(40));
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+        down = false;
+        }
 
         for (int j = 0; j < global::CUBES; j++) {
             glBindVertexArray(VAO[j]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
         
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -231,6 +328,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_Q && action == GLFW_PRESS) left = true;    
     else if (key == GLFW_KEY_E && action == GLFW_PRESS) right = true;
+    else if (key == GLFW_KEY_Z && action == GLFW_PRESS) front = true;
+    else if (key == GLFW_KEY_C && action == GLFW_PRESS) bottom = true;
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS) top = true;
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS) down = true;
+    
 }
 
 
