@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "global.h"
+#include "params.h"
 
 class Camera {
 public:
@@ -44,12 +44,12 @@ Camera::Camera() {
 }
 
 void Camera::define_perspective() {	
-	this->projection = glm::perspective(this->zoom, (float)tools::SCR_WIDTH / (float)tools::SCR_HEIGHT, 0.1f, 100.0f);
+	this->projection = glm::perspective(this->zoom, (float)params::SCR_WIDTH / (float)params::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::update_perspective(float zoom) {	
 	this->zoom = glm::radians(zoom);
-	this->projection = glm::perspective(this->zoom, (float)tools::SCR_WIDTH / (float)tools::SCR_HEIGHT, 0.1f, 100.0f);	
+	this->projection = glm::perspective(this->zoom, (float)params::SCR_WIDTH / (float)params::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::define_view() {		

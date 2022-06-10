@@ -15,11 +15,13 @@ namespace params {
 
     const int CUBES = 26;
 
+    const int TIMING = 40;
+
+    void sleep() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(TIMING));
+    }
+
 }
 
-namespace common {
-    void sleep(int timing) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
-    }
-}
+
 #endif
