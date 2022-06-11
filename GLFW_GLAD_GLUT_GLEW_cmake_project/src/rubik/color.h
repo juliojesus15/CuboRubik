@@ -12,10 +12,10 @@ namespace color {
     MapColor define_ids() {
         MapColor codes;
         codes['W'] = 0; // White
-        codes['O'] = 1; // Orange
-        codes['G'] = 2; // Green
-        codes['R'] = 3; // Red
-        codes['B'] = 4; // Blue
+        codes['B'] = 1; // Blue
+        codes['O'] = 2; // Orange
+        codes['G'] = 3; // Green
+        codes['R'] = 4; // Red
         codes['Y'] = 5; // Yellow
         return codes;
     }
@@ -23,10 +23,10 @@ namespace color {
     MapColor define_encode() {
         MapColor codes;
         codes['W'] = 1; // White
-        codes['O'] = 2; // Orange
-        codes['G'] = 3; // Green
-        codes['R'] = 4; // Red
-        codes['B'] = 5; // Blue
+        codes['B'] = 2; // Blue
+        codes['O'] = 3; // Orange
+        codes['G'] = 4; // Green
+        codes['R'] = 5; // Red
         codes['Y'] = 6; // Yellow
         return codes;
     }
