@@ -65,7 +65,7 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(params::SCR_WIDTH, params::SCR_HEIGHT, "Comp. Grafica - Rubik", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(params::SCR_WIDTH, params::SCR_HEIGHT, "Cubo Rubik - UCSP", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -112,6 +112,24 @@ int main() {
         glEnableVertexAttribArray(1);
         i++;
     }
+    std::cout << "====================================" << std::endl;
+    std::cout << "Controles Rubik" << std::endl;
+    std::cout << "Q (Rotacion Left)" << std::endl;
+    std::cout << "E (Rotacion Rgithizquierda)" << std::endl;
+    std::cout << "A (Rotacion Top)" << std::endl;
+    std::cout << "D (Rotacion Down)" << std::endl;
+    std::cout << "Z (Rotacion Front)" << std::endl;
+    std::cout << "C (Rotacion Back)" << std::endl;
+    std::cout << "====================================" << std::endl;
+    std::cout << "Controles Camara:" << std::endl;
+    std::cout << "KEY_UP: Arriba" << std::endl;
+    std::cout << "KEY_DOWN: Abajo" << std::endl;
+    std::cout << "KEY_RIGHT: Derecha" << std::endl;
+    std::cout << "KEY_LEFT: Izquierda" << std::endl;
+    std::cout << "====================================" << std::endl;
+    std::cout << "Notas: " << std::endl;
+    std::cout << "1) Por ahora solo se mueven en un solo sentido" << std::endl;
+    std::cout << "2) Las camadas aun no se actualizan en cada rotacion" << std::endl;
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
