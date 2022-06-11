@@ -72,7 +72,7 @@ _Below is an example of how you can instruct your audience on installing and set
 * Finalmente, observe que hay algunos casos (x, y, z) que giran todo el cubo en lugar de un solo lado
 <div align="center">
   <a href="#">
-    <img src="assets/movements.png" alt="Rubik" width="420" >
+    <img src="assets/movements.png" alt="Rubik" >
   </a>
 </div>
 <p align="right">(<a href="#top">Regresar al inicio</a>)</p>
