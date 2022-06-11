@@ -13,7 +13,7 @@ public:
 	group::VecGroup groups;
 
 	RubikCube();	
-	void move_group(char group_id);	
+	void move_group(char group_id, bool clockwise);	
 };
  
 RubikCube::RubikCube() {	
@@ -29,10 +29,11 @@ RubikCube::RubikCube() {
 	this->groups = group::default_groups();	
 }
 
-
-void RubikCube::move_group(char group_id) {
-	group::MapGroup to_rotation = group::define_rotation_axis();
-	group::MapGroup to_translation = group::define_translation_pos();
+// Clokcwise -> True: sentido horario || False: Sentido Antihorario 
+// Group_id  -> Grupo que aplicaremos la transformacíon, el caracter indica una key del map definido en group.h 
+void RubikCube::move_group(char group_id, bool clockwise) {
+	group::MapGroup to_rotation = clockwise ? group::define_rotation_axis_clockwise() : group::define_rotation_axis();
+	group::MapGroup to_translation = clockwise ? group::define_translation_pos_clockwise() : group::define_translation_pos();
 
 	std::vector<char> cube_ids = groups[group_id];
 
