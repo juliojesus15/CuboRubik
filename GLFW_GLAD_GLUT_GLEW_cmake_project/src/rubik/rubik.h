@@ -18,17 +18,17 @@ public:
 	group::VecGroup groups;
 
 	RubikCube();		
-	void print_cube();
+	
 	void render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise);
 
 private:
 	void transformation(char group_id, bool clockwise);
-	void RubikCube::draw_cubes(unsigned int VAO[]);
+	void draw_cubes(unsigned int VAO[]);
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
 	void update_groups(char group_id, bool clockwise);
-	void print(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool flag);
-	void print_groups();
-
+	
+	void print(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool flag, bool content);
+	void print_rubik(bool content);
 };
  
 RubikCube::RubikCube() {	
@@ -108,9 +108,11 @@ void RubikCube::render_transformation(GLFWwindow* window, unsigned int VBO[], un
 	groups[group_id] = update_group(groups[group_id], clockwise);
 	cube_ids = groups[group_id];
 
-	print_cube();
+	print_rubik(true);
+	//print_rubik(false);
 }
 
+// Render de los cubos en la vetana(windows) del openGL
 void RubikCube::draw_cubes(unsigned int VAO[]) {
 	for (int j = 0; j < params::CUBES; j++) {
 		glBindVertexArray(VAO[j]);
@@ -118,30 +120,26 @@ void RubikCube::draw_cubes(unsigned int VAO[]) {
 	}
 }
 
-void RubikCube::print(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool flag) {
+// Dibujar cubo en consola
+void RubikCube::print(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool flag, bool content) {
 	std::map<char, char*> console_color = color::console_colors;
-
 	for (int i = 0; i < mapper.size(); i++) {
-
+		std::vector<char> row = mapper[i];
 		std::string border_left = flag ? "            |" : "|";
 		std::cout << border_left;
-
-		std::vector<char> row = mapper[i];
 		for (int j = 0; j < row.size(); j++) {
 			char cube = row[j];
 			char group = group_id[j];
-			char cube_color = cubes[cube]->get_color(group);
-			
-			char* console = console_color[cube_color];
-			printf(console, cube_color);
+			char color = cubes[cube]->get_color(group);			
+			char* console = console_color[color];
+			printf(console, content ? cubes[cube]->id: color);
 		}
-
 		std::cout << std::endl;
 	}
 }
 
-// Dibujar cubo en consola
-void RubikCube::print_cube() {	
+// content: { true: visualizar el id del cubo, false, visualizar solo el color }
+void RubikCube::print_rubik(bool content) {
 	std::vector<char> mapper = groups['U'];	
 	std::vector<char> ids = { 'U', 'U', 'U' };
 	std::vector< std::vector<char> > top = {
@@ -149,7 +147,7 @@ void RubikCube::print_cube() {
 		{mapper[7], mapper[8], mapper[3]},
 		{mapper[6], mapper[5], mapper[4]}
 	};
-	print(top, ids, true);
+	print(top, ids, true, content);
 	
 	std::vector<char> left = groups['L'];
 	std::vector<char> front = groups['F'];
@@ -161,7 +159,7 @@ void RubikCube::print_cube() {
 		{left[7], left[8], left[3], front[7], front[8], front[3], right[7], right[8], right[3], back[7], back[8], back[3]},
 		{left[6], left[5], left[4], front[6], front[5], front[4], right[6], right[5], right[4], back[6], back[5], back[4]}
 	};
-	print(mid, ids, false);
+	print(mid, ids, false, content);
 	
 	mapper = groups['D'];
 	ids = { 'D', 'D', 'D' };
@@ -170,6 +168,8 @@ void RubikCube::print_cube() {
 		{mapper[7], mapper[8], mapper[3]},
 		{mapper[6], mapper[5], mapper[4]}
 	};
-	print(down, ids, true);
+	print(down, ids, true, content);
+	std::cout << "===================================================" << std::endl;
 }
+
 #endif
