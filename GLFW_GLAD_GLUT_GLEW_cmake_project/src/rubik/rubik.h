@@ -26,7 +26,7 @@ private:
 	void RubikCube::draw_cubes(unsigned int VAO[]);
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
 	void update_groups(char group_id, bool clockwise);
-
+	void print(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool flag);
 	void print_groups();
 
 };
@@ -78,21 +78,14 @@ void RubikCube::transformation(char group_id, bool clockwise) {
 
 	for (int i = 0; i < cube_ids.size(); i++) {		
 		char key = cube_ids[i];
-		cubes[key]->rotation(axis[group_id], position[group_id]);
+		cubes[key]->transformation(axis[group_id], position[group_id]);
 	}
 }
 
 //Metodos para renderizar con OpenGL
 void RubikCube::render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise) {
 	std::vector<char> cube_ids = groups[group_id];
-	std::cout << "============================================================0" << std::endl;
-	std::cout << "ANTES DE LA TRANSFORMACION" << std::endl;
-	print_groups();
-	for (int j = 0; j < cube_ids.size(); j++) {
-	//	std::cout << cube_ids[j] << " ";
-	}
-	std::cout << std::endl;
-
+		
 	for (int i = 0; i < 9; i++) {
 		transformation(group_id, clockwise);
 
@@ -115,13 +108,7 @@ void RubikCube::render_transformation(GLFWwindow* window, unsigned int VBO[], un
 	groups[group_id] = update_group(groups[group_id], clockwise);
 	cube_ids = groups[group_id];
 
-	std::cout << "Despues DE LA TRANSFORMACION" << std::endl;
-	print_groups();
-	for (int j = 0; j < cube_ids.size(); j++) {
-		//std::cout << cube_ids[j] << " ";
-	}
-	std::cout << std::endl;
-	std::cout << "============================================================0" << std::endl;
+	print_cube();
 }
 
 void RubikCube::draw_cubes(unsigned int VAO[]) {
@@ -131,28 +118,58 @@ void RubikCube::draw_cubes(unsigned int VAO[]) {
 	}
 }
 
-void RubikCube::print_groups() {
-	for (auto iter = groups.begin(); iter != groups.end(); ++iter) {
-		//iter->second.size();
-		std::cout << "Group Id: " << iter->first << std::endl;
-		std::vector<char> tmp = iter->second;
-		for (int i = 0; i < tmp.size(); i++) {
-			std::cout << tmp[i] << " ";
+void RubikCube::print(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool flag) {
+	std::map<char, char*> console_color = color::console_colors;
+
+	for (int i = 0; i < mapper.size(); i++) {
+
+		std::string border_left = flag ? "            |" : "|";
+		std::cout << border_left;
+
+		std::vector<char> row = mapper[i];
+		for (int j = 0; j < row.size(); j++) {
+			char cube = row[j];
+			char group = group_id[j];
+			char cube_color = cubes[cube]->get_color(group);
+			
+			char* console = console_color[cube_color];
+			printf(console, cube_color);
 		}
+
 		std::cout << std::endl;
 	}
 }
 
-void RubikCube::print_cube() {
-	for (auto iter = groups.begin(); iter != groups.end(); ++iter) {
-		//iter->second.size();
-		std::cout << "Group Id: " << iter->first << std::endl;
-		std::vector<char> tmp = iter->second;
-		for (int i = 0; i < tmp.size(); i++) {
-			std::cout << tmp[i] << " ";
-		}
-		std::cout << std::endl;
-	}
+// Dibujar cubo en consola
+void RubikCube::print_cube() {	
+	std::vector<char> mapper = groups['U'];	
+	std::vector<char> ids = { 'U', 'U', 'U' };
+	std::vector< std::vector<char> > top = {
+		{mapper[0], mapper[1], mapper[2]},
+		{mapper[7], mapper[8], mapper[3]},
+		{mapper[6], mapper[5], mapper[4]}
+	};
+	print(top, ids, true);
+	
+	std::vector<char> left = groups['L'];
+	std::vector<char> front = groups['F'];
+	std::vector<char> right = groups['R'];
+	std::vector<char> back = groups['B'];	
+	ids = { 'L', 'L', 'L', 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B'};
+	std::vector< std::vector<char> > mid = {
+		{left[0], left[1], left[2], front[0], front[1], front[2], right[0], right[1], right[2], back[0], back[1], back[2]},
+		{left[7], left[8], left[3], front[7], front[8], front[3], right[7], right[8], right[3], back[7], back[8], back[3]},
+		{left[6], left[5], left[4], front[6], front[5], front[4], right[6], right[5], right[4], back[6], back[5], back[4]}
+	};
+	print(mid, ids, false);
+	
+	mapper = groups['D'];
+	ids = { 'D', 'D', 'D' };
+	std::vector< std::vector<char> > down = {
+		{mapper[0], mapper[1], mapper[2]},
+		{mapper[7], mapper[8], mapper[3]},
+		{mapper[6], mapper[5], mapper[4]}
+	};
+	print(down, ids, true);
 }
-
 #endif

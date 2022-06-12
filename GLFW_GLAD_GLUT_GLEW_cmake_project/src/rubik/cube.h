@@ -13,17 +13,19 @@ typedef std::map<int, std::pair<char, char > > Colors;
 class Cube {
 public:
     char id;   
-    int type;       // 0: centro 1: Borde 2: Esquina
+    size_t type;       // 1: centro 2: Borde 3: Esquina
     Colors colors;
     std::vector<float> vertex;
             
-    Cube(char cube_id, std::vector<char> colors);    
+    Cube(char cube_id, std::vector<char> colors);
+
+    char get_color(char group_id);
     void translation(glm::vec3 move_to);
-    void rotation(glm::vec3 r, glm::vec3 t);
+    void transformation(glm::vec3 r, glm::vec3 t);
 
 private:
     Colors set_colors(std::vector<char> list_colors);
-    void applying_transformation(glm::mat4 model);
+    void update_vertex(glm::mat4 model);
 };
 
 Cube::Cube(char cube_id, std::vector<char> list_colors) {
@@ -36,6 +38,7 @@ Cube::Cube(char cube_id, std::vector<char> list_colors) {
 Colors Cube::set_colors(std::vector<char> list_colors) {
     color::MapColor color_encode = color::encode_RGB();
     color::MapGroup group_encode = color::encode_group();
+    
     Colors buffer;
 
     for (int i = 0; i < list_colors.size(); i++) {
@@ -45,8 +48,8 @@ Colors Cube::set_colors(std::vector<char> list_colors) {
         std::vector<float> RGB = color_encode[current_color].second;
         
         // Configurando el color en cada vertice
-        double from = idx * 36;
-        double to = from + 36;
+        int from = idx * 36;
+        int to = from + 36;
         
         for (int j = from; j < to; j += 6) {
             vertex[j + 3] = RGB[0];
@@ -60,7 +63,17 @@ Colors Cube::set_colors(std::vector<char> list_colors) {
     return buffer;
 }
 
-void Cube::applying_transformation(glm::mat4 model) {
+char Cube::get_color(char group_id) {
+    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+        std::pair<char, char > current = iter->second;
+        if (current.second == group_id) {
+            return current.first;
+        }
+    }
+    return 'X';
+}
+
+void Cube::update_vertex(glm::mat4 model) {
     for (float i = 0; i < vertex.size(); i += 6) {
         glm::vec4 result = model * glm::vec4(vertex[i], vertex[i + 1], vertex[i + 2], 1.0f);
         vertex[i] = result.x;
@@ -69,15 +82,15 @@ void Cube::applying_transformation(glm::mat4 model) {
     }
 }
 
-void Cube::translation(glm::vec3 move_to) {
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), move_to);
-    applying_transformation(model);
+void Cube::translation(glm::vec3 pos) {
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+    update_vertex(model);
 }
 
-void Cube::rotation(glm::vec3 r, glm::vec3 t) {
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), r);
-    model = glm::translate(model, t);
-    applying_transformation(model);
+void Cube::transformation(glm::vec3 axis, glm::vec3 pos) {
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), axis);
+    model = glm::translate(model, pos);
+    update_vertex(model);
 }
 
 #endif
