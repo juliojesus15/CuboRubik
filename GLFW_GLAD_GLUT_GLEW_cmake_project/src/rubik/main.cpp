@@ -30,27 +30,6 @@ void draw_cubes() {
     }
 }
 
-//Render transformation
-void processing_group(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise) {
-    for (int i = 0; i < 9; i++) {
-        rubik.move_group(group_id, clockwise);
-        int k = 0;
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
-            glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
-            k++;
-        }
-
-        draw_cubes();
-        params::sleep();
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }    
-}
-
 int main() {
     // glfw: initialize and configure
     // ------------------------------
@@ -111,25 +90,7 @@ int main() {
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
         i++;
-    }
-    std::cout << "====================================" << std::endl;
-    std::cout << "Controles Rubik" << std::endl;
-    std::cout << "Q (Rotacion Left)" << std::endl;
-    std::cout << "E (Rotacion Rgithizquierda)" << std::endl;
-    std::cout << "A (Rotacion Top)" << std::endl;
-    std::cout << "D (Rotacion Down)" << std::endl;
-    std::cout << "Z (Rotacion Front)" << std::endl;
-    std::cout << "C (Rotacion Back)" << std::endl;
-    std::cout << "====================================" << std::endl;
-    std::cout << "Controles Camara:" << std::endl;
-    std::cout << "KEY_UP: Arriba" << std::endl;
-    std::cout << "KEY_DOWN: Abajo" << std::endl;
-    std::cout << "KEY_RIGHT: Derecha" << std::endl;
-    std::cout << "KEY_LEFT: Izquierda" << std::endl;
-    std::cout << "====================================" << std::endl;
-    std::cout << "Notas: " << std::endl;
-    std::cout << "1) Por ahora solo se mueven en un solo sentido" << std::endl;
-    std::cout << "2) Las camadas aun no se actualizan en cada rotacion" << std::endl;
+    }    
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -149,7 +110,7 @@ int main() {
         ourShader.setMat4("view", camera.view);
      
         draw_cubes();
-
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -181,42 +142,42 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {    
-    
-    // Grupo izquierdo, True gira en sentido horario, Falso en sentido antihorario
+    // True gira en sentido horario, Falso en sentido antihorario
+    // Grupo izquierdo
     if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'L', true);
+        rubik.render_transformation(window, VBO, VAO, 'L', true);
     else if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'L', false);
+        rubik.render_transformation(window, VBO, VAO, 'L', false);
 
-    // Grupo derecho, True gira en sentido horario, Falso en sentido antihorario
+    // Grupo derecho
     else if (key == GLFW_KEY_E && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'R', true);
+        rubik.render_transformation(window, VBO, VAO, 'R', true);
     else if (key == GLFW_KEY_R && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'R', false);
+        rubik.render_transformation(window, VBO, VAO, 'R', false);
 
-    // Grupo frontal, True gira en sentido horario, Falso en sentido antihorario
+    // Grupo frontal
     else if (key == GLFW_KEY_Z && action == GLFW_PRESS) 
-        processing_group(window, VBO, VAO, 'F', true);
+        rubik.render_transformation(window, VBO, VAO, 'F', true);
     else if (key == GLFW_KEY_X && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'F', false);
+        rubik.render_transformation(window, VBO, VAO, 'F', false);
 
-    // Grupo posterior, True gira en sentido horario, Falso en sentido antihorario
+    // Grupo posterior
     else if (key == GLFW_KEY_C && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'B', true);
+        rubik.render_transformation(window, VBO, VAO, 'B', true);
     else if (key == GLFW_KEY_V && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'B', false);
+        rubik.render_transformation(window, VBO, VAO, 'B', false);
     
-    // Grupo superior, True gira en sentido horario, Falso en sentido antihorario
+    // Grupo superior
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'U', true);
+        rubik.render_transformation(window, VBO, VAO, 'U', true);
     else if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'U', false);
+        rubik.render_transformation(window, VBO, VAO, 'U', false);
 
-    // Grupo inferior, True gira en sentido horario, Falso en sentido antihorario
+    // Grupo inferior
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'D', true);
+        rubik.render_transformation(window, VBO, VAO, 'D', true);
     else if (key == GLFW_KEY_F && action == GLFW_PRESS)
-        processing_group(window, VBO, VAO, 'D', false);
+        rubik.render_transformation(window, VBO, VAO, 'D', false);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {

@@ -6,40 +6,32 @@
 
 namespace color {
 
-    typedef std::map<char, std::vector<float> > MapCode;
-    typedef std::map<char, int> MapColor;
+    typedef std::map<char, std::pair<int, std::vector<float> > > MapColor;
+    typedef std::map<char, char> MapGroup;
 
-    MapColor define_ids() {
-        MapColor codes;
-        codes['W'] = 0; // White
-        codes['B'] = 1; // Blue
-        codes['O'] = 2; // Orange
-        codes['G'] = 3; // Green
-        codes['R'] = 4; // Red
-        codes['Y'] = 5; // Yellow
-        return codes;
+    // Definimos la relacion color - grupo
+    MapGroup encode_group() {
+        MapGroup group;
+        group['W'] = 'U'; // White  - Up
+        group['B'] = 'L'; // Blue   - Left
+        group['O'] = 'F'; // Orange - Front
+        group['G'] = 'R'; // Green  - Right
+        group['R'] = 'B'; // Red    - Back
+        group['Y'] = 'D'; // Yellow - Down
+        return group;
     }
 
-    MapColor define_encode() {
-        MapColor codes;
-        codes['W'] = 1; // White
-        codes['B'] = 2; // Blue
-        codes['O'] = 3; // Orange
-        codes['G'] = 4; // Green
-        codes['R'] = 5; // Red
-        codes['Y'] = 6; // Yellow
-        return codes;
-    }
-
-    MapCode define_codes() {
-        MapCode codes;
-        codes['W'] = { 1.00f, 1.00f, 1.00f }; // White
-        codes['O'] = { 1.00f, 0.34f, 0.00f }; // Orange
-        codes['G'] = { 0.00f, 0.61f, 0.27f }; // Green
-        codes['R'] = { 0.72f, 0.04f, 0.19f }; // Red
-        codes['B'] = { 0.00f, 0.26f, 0.68f }; // Blue
-        codes['Y'] = { 1.00f, 0.83f, 0.00f }; // Yellow
-        return codes;
+    // Asignanos a cada color(char) un pair, que consta de un indice(int) y codigo RGB (vector)
+    MapColor encode_RGB() {
+        //encode[color] = < indice, <vec_RGB> >
+        MapColor encode;
+        encode.insert({ 'W', {0, { 1.00f, 1.00f, 1.00f }} });   // White
+        encode.insert({ 'B', {1, { 0.00f, 0.26f, 0.68f }} });   // Blue
+        encode.insert({ 'O', {2, { 1.00f, 0.34f, 0.00f }} });   // Orange
+        encode.insert({ 'G', {3, { 0.00f, 0.61f, 0.27f }} });   // Green 
+        encode.insert({ 'R', {4, { 0.72f, 0.04f, 0.19f }} });   // Red
+        encode.insert({ 'Y', {5, { 1.00f, 0.83f, 0.00f }} });   // Yellow
+        return encode;
     } 
 }
 

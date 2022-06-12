@@ -8,35 +8,44 @@
 #include "value.h"
 #include "color.h"
 
+typedef std::map<int, std::pair<char, char > > Colors;
+
 class Cube {
 public:
-    char cube_id;
+    char id;   
+    int type;       // 0: centro 1: Borde 2: Esquina
+    Colors colors;
     std::vector<float> vertex;
-        
+            
     Cube(char cube_id, std::vector<char> colors);    
     void translation(glm::vec3 move_to);
     void rotation(glm::vec3 r, glm::vec3 t);
 
 private:
-    void set_colors(std::vector<char> colors);
+    Colors set_colors(std::vector<char> list_colors);
     void applying_transformation(glm::mat4 model);
 };
 
-Cube::Cube(char cube_id, std::vector<char> colors) {
+Cube::Cube(char cube_id, std::vector<char> list_colors) {
+    this->id = cube_id;
+    this->type = list_colors.size();
     this->vertex = values::vertex;
-    this->cube_id = cube_id;
-    set_colors(colors);
+    this->colors = set_colors(list_colors);
 }
 
-void Cube::set_colors(std::vector<char> colors) {    
-    color::MapCode codes = color::define_codes();
-    color::MapColor ids  = color::define_ids();
+Colors Cube::set_colors(std::vector<char> list_colors) {
+    color::MapColor color_encode = color::encode_RGB();
+    color::MapGroup group_encode = color::encode_group();
+    Colors buffer;
 
-    for (int i = 0; i < colors.size(); i++) {        
-        char current_color = colors[i];
-        std::vector<float> RGB = codes[current_color];
+    for (int i = 0; i < list_colors.size(); i++) {
+        char current_color = list_colors[i];
+
+        int idx = color_encode[current_color].first;
+        std::vector<float> RGB = color_encode[current_color].second;
         
-        double from = ids[current_color] * 36;
+        // Configurando el color en cada vertice
+        double from = idx * 36;
         double to = from + 36;
         
         for (int j = from; j < to; j += 6) {
@@ -44,7 +53,11 @@ void Cube::set_colors(std::vector<char> colors) {
             vertex[j + 4] = RGB[1];
             vertex[j + 5] = RGB[2];
         }
+
+        // Guardando los ids del color        
+        buffer[i] = std::pair<char, char>(current_color, group_encode[current_color]);        
     }
+    return buffer;
 }
 
 void Cube::applying_transformation(glm::mat4 model) {
