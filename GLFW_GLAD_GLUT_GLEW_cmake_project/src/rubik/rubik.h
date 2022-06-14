@@ -60,20 +60,31 @@ std::vector<char> RubikCube::update_group(std::vector<char> to_update, bool cloc
 
 // Actualiza los grupos vecinos de un grupo especifico(group_id)
 void RubikCube::update_neighborhood(char group_id, bool clockwise) {
-	std::cout << "ANTES: " << std::endl;
-	print_groups();
+	//std::cout << "ANTES: " << std::endl;
+	//print_groups();
 	// Definimos el vecinario respecto a la orientacion (grupo.h)
 	std::vector<char> neighborhood = clockwise ? group::rotation_clockwise(group_id) : group::rotation_inverted(group_id);
 
 	// Grupo (Camada) a la cual hemos aplicado la transformacion
 	std::vector<char> group = groups[group_id];
 
-	std::vector< std::vector<char> > swappers = {
+	// U B D F U
+	std::vector< std::vector<char> > swappers_clockwise = {
 		{ group[0], group[2] }, { group[1], group[3] }, { group[2], group[4] }, // U -> B
 		{ group[2], group[4] }, { group[3], group[5] }, { group[4], group[6] }, // B -> D
 		{ group[4], group[6] }, { group[5], group[7] }, { group[6], group[0] }, // D -> F
 		{ group[6], group[0] }, { group[7], group[1] }, { group[0], group[2] },	// F -> U
 	};
+
+	// U F D B U
+	std::vector< std::vector<char> > swappers_inverted = {
+		{ group[2], group[0] }, { group[1], group[7] }, { group[0], group[6] }, // U -> F
+		{ group[0], group[6] }, { group[7], group[5] }, { group[6], group[4] }, // F -> D
+		{ group[6], group[4] }, { group[5], group[3] }, { group[4], group[2] }, // D -> B
+		{ group[4], group[2] }, { group[3], group[1] }, { group[2], group[0] },	// B -> U
+	};
+
+	std::vector< std::vector<char> > swappers = clockwise ? swappers_clockwise : swappers_inverted;
 
 	// Obteniendo la orientacion actual del color de cada cubo
 	std::vector< std::vector<char> > contanier_current_colors;
@@ -92,7 +103,7 @@ void RubikCube::update_neighborhood(char group_id, bool clockwise) {
 		char group_id = neighborhood[i + 3];
 		// Obteniendo el grupo al que aplicaremos los cambios
 		group = groups[group_id];
-		std::cout << ">> Grupo al que aplicaremos el cambio: "<<  group_id << std::endl;
+		//std::cout << ">> Grupo al que aplicaremos el cambio: "<<  group_id << std::endl;
 		//std::cout << "   Estado actual del grupo " << group_id << ": ";
 		//for (auto i : group)
 		//	std::cout << i << " - ";
@@ -121,16 +132,16 @@ void RubikCube::update_neighborhood(char group_id, bool clockwise) {
 		int tmp = cubes[current_cube_id]->find_color_id(contanier_current_colors[i][0], contanier_current_colors[i][1]);
 		cubes[current_cube_id]->colors[tmp].second = group_id;
 
-		std::cout << "   DESPUES" << std::endl;
-		cubes[current_cube_id]->info();
+		//std::cout << "   DESPUES" << std::endl;
+		//cubes[current_cube_id]->info();
 		//std::cout << "*************************************************" << std::endl;
 	}
 
 	// Actualizamos la rotacion sobre el grupo que se aplico la transformacion (group_id)	
 	group = groups[group_id];
 	groups[group_id] = update_group(group, clockwise);	
-	std::cout << "DESPUES: " << std::endl;
-	print_groups();
+	//std::cout << "DESPUES: " << std::endl;
+	//print_groups();
 }
 
 // Clokcwise -> True: sentido horario || False: Sentido Antihorario 

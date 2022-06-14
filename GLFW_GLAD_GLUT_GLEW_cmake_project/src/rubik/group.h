@@ -86,8 +86,8 @@ namespace group {
         group['L'] = { 'U', 'U', 'U', 'B', 'B', 'B', 'D', 'D', 'D', 'F', 'F', 'F', 'U', 'U', 'U' };
         group['F'] = { 'U', 'U', 'U', 'L', 'L', 'L', 'D', 'D', 'D', 'R', 'R', 'R', 'U', 'U', 'U' };
         group['B'] = { 'U', 'U', 'U', 'R', 'R', 'R', 'D', 'D', 'D', 'L', 'L', 'L', 'U', 'U', 'U' };
-        group['U'] = { 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B', 'L', 'L', 'L', 'F', 'F', 'F' };
-        group['D'] = { 'B', 'B', 'B', 'R', 'R', 'R', 'F', 'F', 'F', 'L', 'L', 'L', 'B', 'B', 'B' };
+        group['U'] = { 'B', 'B', 'B', 'L', 'L', 'L', 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B' };
+        group['D'] = { 'F', 'F', 'F', 'L', 'L', 'L', 'B', 'B', 'B', 'R', 'R', 'R', 'F', 'F', 'F' };
         return group[group_id];
     }
 }
