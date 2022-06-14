@@ -24,7 +24,6 @@ public:
 
     Solver();
     std::vector<std::string> get_steps(bool display);
-    void get_http_steps();
 
 private:
     void generate_steps();
@@ -15535,36 +15534,5 @@ void Solver::display_steps(std::vector< std::string> steps) {
     std::cout << "Nro. de pasos: " << steps.size() << std::endl;
 }
 
-
-void Solver::get_http_steps() {
-    
-    //CURL test
-    /*
-    CURL* curl; 
-    CURLcode response;
-
-    curl_global_init(CURL_GLOBAL_ALL);
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://rubiksolverapi.herokuapp.com/solver/555111111655222222222331331331444444444655655663663663");        
-        response = curl_easy_perform(curl);        
-
-        if (response != CURLE_OK) {
-            fprintf(stderr, "Request failed: %s\n", curl_easy_strerror(response));
-        }
-        else {
-            //printf(response);
-            std::cout << response << "\n\n";
-
-        }
-        curl_easy_cleanup(curl);
-
-    }
-
-    curl_global_cleanup();
-    */
-    
-}
 
 #endif

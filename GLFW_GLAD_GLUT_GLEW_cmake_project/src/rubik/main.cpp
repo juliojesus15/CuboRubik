@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "params.h"
 #include "rubik.h"
+#include "solver.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -20,6 +21,7 @@ float lastFrame = 0.0f;
 
 Camera camera;
 RubikCube rubik;
+Solver solver;
 
 unsigned int VBO[params::CUBES], VAO[params::CUBES];
 
@@ -31,6 +33,8 @@ void draw_cubes() {
 }
 
 int main() {
+
+    solver.get_steps(true);
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -146,38 +150,38 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     // Grupo izquierdo
     if (key == GLFW_KEY_Q && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'L', true);
-    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'L', false);
+    //else if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'L', false);
 
     // Grupo derecho
     else if (key == GLFW_KEY_E && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'R', true);
-    else if (key == GLFW_KEY_R && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'R', false);
+    //else if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'R', false);
 
     // Grupo frontal
     else if (key == GLFW_KEY_Z && action == GLFW_PRESS) 
         rubik.render_transformation(window, VBO, VAO, 'F', true);
-    else if (key == GLFW_KEY_X && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'F', false);
+    //else if (key == GLFW_KEY_X && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'F', false);
 
     // Grupo posterior
     else if (key == GLFW_KEY_C && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'B', true);
-    else if (key == GLFW_KEY_V && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'B', false);
+    //else if (key == GLFW_KEY_V && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'B', false);
     
     // Grupo superior
     else if (key == GLFW_KEY_A && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'U', true);
-    else if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'U', false);
+    //else if (key == GLFW_KEY_S && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'U', false);
 
     // Grupo inferior
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'D', true);
-    else if (key == GLFW_KEY_F && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'D', false);
+    //else if (key == GLFW_KEY_F && action == GLFW_PRESS)
+    //    rubik.render_transformation(window, VBO, VAO, 'D', false);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {

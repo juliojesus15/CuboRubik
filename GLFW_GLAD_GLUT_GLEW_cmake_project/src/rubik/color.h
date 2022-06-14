@@ -4,8 +4,7 @@
 #include <vector>
 #include <map>
 
-namespace color {
-
+namespace color {    
     typedef std::map<char, std::pair<int, std::vector<float> > > MapColor;
     typedef std::map<char, char> MapGroup;
 

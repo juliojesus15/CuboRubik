@@ -9,6 +9,8 @@
 #include <map>
 
 namespace values {
+
+    // Vertices pre definidos 
     std::vector<float> vertex = {
         -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
         -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
@@ -53,18 +55,12 @@ namespace values {
         -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
     };
 
+    // Ids que asignaremos a cada cubo
     std::vector<char> cube_ids = {
-        'A', 'B', 'C',
-        'D', 'E', 'F',
-        'G', 'H', 'I',
-        'J', 'K', 'L',
-        'M',      'N',
-        'O', 'P', 'Q',
-        'R', 'S', 'T',
-        'U', 'V', 'W',
-        'X', 'Y', 'Z'
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
     };
-
+    
     std::vector<std::vector<char> > cube_colors = {
         { 'B', 'R', 'W' },  { 'R', 'W' },   { 'G', 'R', 'W' },
         { 'B', 'R' },       { 'R' },        { 'G', 'R' },
@@ -79,6 +75,7 @@ namespace values {
         { 'B', 'O', 'Y' },  { 'O', 'Y' },   { 'G', 'O', 'Y' }
     };
 
+    // Posicion para cada cubo, esta transformacion se aplica en el constructor del cubo rubik
     std::vector<glm::vec3> cube_positions = {
         glm::vec3(-0.50f,  0.50f, -0.50f), glm::vec3(0.50f,  0.50f, -0.50f), glm::vec3(1.50f,  0.50f, -0.50f),
         glm::vec3(-0.50f, -0.50f, -0.50f), glm::vec3(0.50f, -0.50f, -0.50f), glm::vec3(1.50f, -0.50f, -0.50f),
