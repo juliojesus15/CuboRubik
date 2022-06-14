@@ -7,6 +7,7 @@
 namespace group {
     typedef std::map<char, glm::vec3 > MapGroup;
     typedef std::map<char, std::vector<char> > VecGroup;
+    typedef std::map<std::string, std::pair<char, bool> > MapMovements;
 
     // Vec3 representa el eje donde se realizara la rotacion 
     MapGroup rotation_axis_inverted() {
@@ -89,6 +90,33 @@ namespace group {
         group['U'] = { 'B', 'B', 'B', 'L', 'L', 'L', 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B' };
         group['D'] = { 'F', 'F', 'F', 'L', 'L', 'L', 'B', 'B', 'B', 'R', 'R', 'R', 'F', 'F', 'F' };
         return group[group_id];
+    }
+
+    // Definiendo los movimientos automaticos para realizar la mezcla y solucion
+    MapMovements movements() {
+        MapMovements container_movements;
+        // Sentido horario
+        container_movements.insert({ "L", {'L', true}});
+        container_movements.insert({ "R", {'R', true} });
+        container_movements.insert({ "F", {'F', true} });
+        container_movements.insert({ "B", {'B', true} });
+        container_movements.insert({ "U", {'U', true} });
+        container_movements.insert({ "D", {'D', true} });
+        // Sentido inverso
+        container_movements.insert({ "L'", {'L', false} });
+        container_movements.insert({ "R'", {'R', false} });
+        container_movements.insert({ "F'", {'F', false} });
+        container_movements.insert({ "B'", {'B', false} });
+        container_movements.insert({ "U'", {'U', false} });
+        container_movements.insert({ "D'", {'D', false} });
+        // Doble rotacion
+        container_movements.insert({ "L2", {'L', true} });
+        container_movements.insert({ "R2", {'R', true} });
+        container_movements.insert({ "F2", {'F', true} });
+        container_movements.insert({ "B2", {'B', true} });
+        container_movements.insert({ "U2", {'U', true} });
+        container_movements.insert({ "D2", {'D', true} });
+        return container_movements;
     }
 }
 

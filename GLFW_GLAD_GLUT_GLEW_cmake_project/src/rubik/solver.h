@@ -7,6 +7,8 @@
 #include<iostream>
 #include <vector>
 
+typedef std::vector< std::vector<char> > FaceSolver;
+
 class Solver {
 public:
     //Solver
@@ -15,14 +17,30 @@ public:
     int x = 0, k, z, p, q, v;
     
     //Faces
+   
     char white[3][3];
     char orange[3][3];
     char green[3][3];
     char red[3][3];
     char blue[3][3];
     char yellow[3][3];
-
+    
     Solver();
+    void set_white_face(FaceSolver face);
+    void set_orange_face(FaceSolver face);
+    void set_green_face(FaceSolver face);
+    void set_red_face(FaceSolver face);
+    void set_blue_face(FaceSolver face);
+    void set_yellow_face(FaceSolver face);
+
+    void print_white_face();
+    void print_orange_face();
+    void print_green_face();
+    void print_red_face();
+    void print_blue_face();
+    void print_yellow_face();
+
+
     std::vector<std::string> get_steps(bool display);
 
 private:
@@ -48,22 +66,93 @@ Solver::Solver() {
     //the colours of green centered face in matrix order keeping white centered face as top
     green[0][0] = 'G'; green[0][1] = 'G'; green[0][2] = 'G';
     green[1][0] = 'G'; green[1][1] = 'G'; green[1][2] = 'G';
-    green[2][0] = 'Y'; green[2][1] = 'Y'; green[2][2] = 'Y';
+    green[2][0] = 'G'; green[2][1] = 'G'; green[2][2] = 'G';
 
     //the colours of red centered face in matrix order keeping white centered face as top
     red[0][0] = 'R'; red[0][1] = 'R'; red[0][2] = 'R';
     red[1][0] = 'R'; red[1][1] = 'R'; red[1][2] = 'R';
-    red[2][0] = 'R'; red[2][1] = 'O'; red[2][2] = 'B';
+    red[2][0] = 'R'; red[2][1] = 'R'; red[2][2] = 'R';
 
     //the colours of blue centered face in matrix order keeping white centered face as top
     blue[0][0] = 'B'; blue[0][1] = 'B'; blue[0][2] = 'B';
     blue[1][0] = 'B'; blue[1][1] = 'B'; blue[1][2] = 'B';
-    blue[2][0] = 'O'; blue[2][1] = 'R'; blue[2][2] = 'G';
+    blue[2][0] = 'B'; blue[2][1] = 'B'; blue[2][2] = 'B';
 
     //the colours of yellow centered face in matrix order keeping orange centered face as top
-    yellow[0][0] = 'Y'; yellow[0][1] = 'B'; yellow[0][2] = 'O';
-    yellow[1][0] = 'Y'; yellow[1][1] = 'Y'; yellow[1][2] = 'G';
-    yellow[2][0] = 'Y'; yellow[2][1] = 'Y'; yellow[2][2] = 'B';
+    yellow[0][0] = 'Y'; yellow[0][1] = 'Y'; yellow[0][2] = 'Y';
+    yellow[1][0] = 'Y'; yellow[1][1] = 'Y'; yellow[1][2] = 'Y';
+    yellow[2][0] = 'Y'; yellow[2][1] = 'Y'; yellow[2][2] = 'Y';
+
+}
+
+void Solver::set_white_face(FaceSolver face) {
+    white[0][0] = face[0][0]; white[0][1] = face[0][1]; white[0][2] = face[0][2];
+    white[1][0] = face[1][0]; white[1][1] = face[1][1]; white[1][2] = face[1][2];
+    white[2][0] = face[2][0]; white[2][1] = face[2][1]; white[2][2] = face[2][2];
+}
+void Solver::set_orange_face(FaceSolver face) {
+    orange[0][0] = face[0][0]; orange[0][1] = face[0][1]; orange[0][2] = face[0][2];
+    orange[1][0] = face[1][0]; orange[1][1] = face[1][1]; orange[1][2] = face[1][2];
+    orange[2][0] = face[2][0]; orange[2][1] = face[2][1]; orange[2][2] = face[2][2];
+}
+void Solver::set_green_face(FaceSolver face) {
+    green[0][0] = face[0][0]; green[0][1] = face[0][1]; green[0][2] = face[0][2];
+    green[1][0] = face[1][0]; green[1][1] = face[1][1]; green[1][2] = face[1][2];
+    green[2][0] = face[2][0]; green[2][1] = face[2][1]; green[2][2] = face[2][2];
+}
+void Solver::set_red_face(FaceSolver face) {
+    red[0][0] = face[0][0]; red[0][1] = face[0][1]; red[0][2] = face[0][2];
+    red[1][0] = face[1][0]; red[1][1] = face[1][1]; red[1][2] = face[1][2];
+    red[2][0] = face[2][0]; red[2][1] = face[2][1]; red[2][2] = face[2][2];
+
+}
+void Solver::set_blue_face(FaceSolver face) {
+    blue[0][0] = face[0][0]; blue[0][1] = face[0][1]; blue[0][2] = face[0][2];
+    blue[1][0] = face[1][0]; blue[1][1] = face[1][1]; blue[1][2] = face[1][2];
+    blue[2][0] = face[2][0]; blue[2][1] = face[2][1]; blue[2][2] = face[1][2];
+}
+void Solver::set_yellow_face(FaceSolver face) {
+    yellow[0][0] = face[0][0]; yellow[0][1] = face[0][1]; yellow[0][2] = face[0][2];
+    yellow[1][0] = face[1][0]; yellow[1][1] = face[1][1]; yellow[1][2] = face[1][2];
+    yellow[2][0] = face[2][0]; yellow[2][1] = face[2][1]; yellow[2][2] = face[1][2];
+}
+
+
+void Solver::print_white_face() {
+    std::cout << "White: " << std::endl;
+    std::cout << white[0][0] << " - " << white[0][1] << " - " << white[0][2] << std::endl;
+    std::cout << white[1][0] << " - " << white[1][1] << " - " << white[1][2] << std::endl;
+    std::cout << white[2][0] << " - " << white[2][1] << " - " << white[2][2] << std::endl;    
+}
+void Solver::print_orange_face() {
+    std::cout << "orange: " << std::endl;
+    std::cout << orange[0][0] << " - " << orange[0][1] << " - " << orange[0][2] << std::endl;
+    std::cout << orange[1][0] << " - " << orange[1][1] << " - " << orange[1][2] << std::endl;
+    std::cout << orange[2][0] << " - " << orange[2][1] << " - " << orange[2][2] << std::endl;
+}
+void Solver::print_green_face() {
+    std::cout << "green: " << std::endl;
+    std::cout << green[0][0] << " - " << green[0][1] << " - " << green[0][2] << std::endl;
+    std::cout << green[1][0] << " - " << green[1][1] << " - " << green[1][2] << std::endl;
+    std::cout << green[2][0] << " - " << green[2][1] << " - " << green[2][2] << std::endl;
+}
+void Solver::print_red_face() {
+    std::cout << "red: " << std::endl;
+    std::cout << red[0][0] << " - " << red[0][1] << " - " << red[0][2] << std::endl;
+    std::cout << red[1][0] << " - " << red[1][1] << " - " << red[1][2] << std::endl;
+    std::cout << red[2][0] << " - " << red[2][1] << " - " << red[2][2] << std::endl;
+}
+void Solver::print_blue_face() {
+    std::cout << "blue: " << std::endl;
+    std::cout << blue[0][0] << " - " << blue[0][1] << " - " << blue[0][2] << std::endl;
+    std::cout << blue[1][0] << " - " << blue[1][1] << " - " << blue[1][2] << std::endl;
+    std::cout << blue[2][0] << " - " << blue[2][1] << " - " << blue[2][2] << std::endl;
+}
+void Solver::print_yellow_face() {
+    std::cout << "yellow: " << std::endl;
+    std::cout << yellow[0][0] << " - " << yellow[0][1] << " - " << yellow[0][2] << std::endl;
+    std::cout << yellow[1][0] << " - " << yellow[1][1] << " - " << yellow[1][2] << std::endl;
+    std::cout << yellow[2][0] << " - " << yellow[2][1] << " - " << yellow[2][2] << std::endl;
 }
 
 void Solver::swap(char& a, char& b) {

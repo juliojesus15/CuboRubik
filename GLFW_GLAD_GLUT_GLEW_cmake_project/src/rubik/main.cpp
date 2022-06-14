@@ -21,7 +21,12 @@ float lastFrame = 0.0f;
 
 Camera camera;
 RubikCube rubik;
-Solver solver;
+Solver solverRubik;
+
+bool solver = false;
+
+// Serie de pasos para mezclar el cubo rubik
+std::vector<std::string> mix = { "D2" };
 
 unsigned int VBO[params::CUBES], VAO[params::CUBES];
 
@@ -105,6 +110,28 @@ int main() {
 
         glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (solver) {
+            FaceSolver up = rubik.map_groups('U');
+            FaceSolver down = rubik.map_groups('D');
+            FaceSolver left = rubik.map_groups('L');
+            FaceSolver right = rubik.map_groups('R');
+            FaceSolver front = rubik.map_groups('F');
+            FaceSolver back = rubik.map_groups('B');
+            
+            solverRubik.set_white_face(up);
+            solverRubik.set_yellow_face(down);
+            solverRubik.set_red_face(back);
+            solverRubik.set_orange_face(front);
+            solverRubik.set_blue_face(left);
+            solverRubik.set_green_face(right);
+            
+            std::vector<std::string> steps = solverRubik.get_steps(true);
+            rubik.do_movements(window, VBO, VAO, steps);
+
+            //solverRubik.print_white_face();
+            solver = false;
+        }
         
         camera.update_perspective();
         camera.update_view();
@@ -172,7 +199,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.render_transformation(window, VBO, VAO, 'D', false);
 
     // Grupo frontal
-    else if (key == GLFW_KEY_Q && action == GLFW_PRESS) 
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'F', true);
     else if (key == GLFW_KEY_U && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'F', false);
@@ -182,6 +209,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.render_transformation(window, VBO, VAO, 'B', true);
     else if (key == GLFW_KEY_O && action == GLFW_PRESS)
         rubik.render_transformation(window, VBO, VAO, 'B', false);
+
+
+    else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+        rubik.do_movements(window, VBO, VAO, mix);
+    else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+        solver = true;
+
     
 }
 
