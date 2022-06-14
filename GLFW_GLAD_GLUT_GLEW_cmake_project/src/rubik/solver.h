@@ -109,12 +109,12 @@ void Solver::set_red_face(FaceSolver face) {
 void Solver::set_blue_face(FaceSolver face) {
     blue[0][0] = face[0][0]; blue[0][1] = face[0][1]; blue[0][2] = face[0][2];
     blue[1][0] = face[1][0]; blue[1][1] = face[1][1]; blue[1][2] = face[1][2];
-    blue[2][0] = face[2][0]; blue[2][1] = face[2][1]; blue[2][2] = face[1][2];
+    blue[2][0] = face[2][0]; blue[2][1] = face[2][1]; blue[2][2] = face[2][2];
 }
 void Solver::set_yellow_face(FaceSolver face) {
     yellow[0][0] = face[0][0]; yellow[0][1] = face[0][1]; yellow[0][2] = face[0][2];
     yellow[1][0] = face[1][0]; yellow[1][1] = face[1][1]; yellow[1][2] = face[1][2];
-    yellow[2][0] = face[2][0]; yellow[2][1] = face[2][1]; yellow[2][2] = face[1][2];
+    yellow[2][0] = face[2][0]; yellow[2][1] = face[2][1]; yellow[2][2] = face[2][2];
 }
 
 

@@ -26,7 +26,7 @@ Solver solverRubik;
 bool solver = false;
 
 // Serie de pasos para mezclar el cubo rubik
-std::vector<std::string> mix = { "D2" };
+std::vector<std::string> mix = { "D2", "R", "F", "B'", "F2", "R", "U", "B'", "L"};
 
 unsigned int VBO[params::CUBES], VAO[params::CUBES];
 
