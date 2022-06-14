@@ -28,8 +28,9 @@ private:
 	void draw_cubes(unsigned int VAO[]);
 
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
-	void update_groups(char group_id, bool clockwise);
+	void update_neighborhood(char group_id, bool clockwise);
 
+	void print_groups();
 	void print(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
 	void print_rubik(bool content);
 };
@@ -58,46 +59,78 @@ std::vector<char> RubikCube::update_group(std::vector<char> to_update, bool cloc
 }
 
 // Actualiza los grupos vecinos de un grupo especifico(group_id)
-void RubikCube::update_groups(char group_id, bool clockwise) {
-	std::vector<char> neighborhood = group::neighborhood(group_id);	
+void RubikCube::update_neighborhood(char group_id, bool clockwise) {
+	std::cout << "ANTES: " << std::endl;
+	print_groups();
+	// Definimos el vecinario respecto a la orientacion (grupo.h)
+	std::vector<char> neighborhood = clockwise ? group::rotation_clockwise(group_id) : group::rotation_inverted(group_id);
+
+	// Grupo (Camada) a la cual hemos aplicado la transformacion
 	std::vector<char> group = groups[group_id];
 
-	// Creamos una copia de los cubos, donde realizaremos las busquedas, mientras el original es modificado
-	Cubes tmp_cubes = cubes;
-	
-	// Representa a la cara superior respecto a la cara que hicimos la rotacion (Sentido horario)
-	std::vector< std::vector<char> > current = {
-		{ group[0], group[1], group[2] },
-		{ group[2], group[3], group[4] },
-		{ group[4], group[5], group[6] },
-		{ group[6], group[7], group[0] }
+	std::vector< std::vector<char> > swappers = {
+		{ group[0], group[2] }, { group[1], group[3] }, { group[2], group[4] }, // U -> B
+		{ group[2], group[4] }, { group[3], group[5] }, { group[4], group[6] }, // B -> D
+		{ group[4], group[6] }, { group[5], group[7] }, { group[6], group[0] }, // D -> F
+		{ group[6], group[0] }, { group[7], group[1] }, { group[0], group[2] },	// F -> U
 	};
 
-	// Representa a la cara derecha respecto a la cara que hicimos la rotacion (Sentido horario)
-	std::vector< std::vector<char> > neighbour = {
-		{ group[2], group[3], group[4] },
-		{ group[4], group[5], group[6] },
-		{ group[6], group[7], group[0] },
-		{ group[0], group[1], group[2] }
-	};
-
-	for (int i = 0; i < 4; i++) {
-		char neighbour_id = neighborhood[i + 1];
-		
-		group = groups[neighbour_id];
-		for (int j = 0; j < 3; j++) {
-			char current_cube = current[i][j];
-			char neighbour_cube = neighbour[i][j];
-
-			std::vector<char>::iterator itr = std::find(group.begin(), group.end(), neighbour_cube);
-			int index = std::distance(group.begin(), itr);
-			
-			groups[neighbour_id][index] = current_cube;
-		}
+	// Obteniendo la orientacion actual del color de cada cubo
+	std::vector< std::vector<char> > contanier_current_colors;
+	for (int i = 0; i < neighborhood.size()-3; i++) {		
+		int idx = cubes[swappers[i][0]]->find_color_id(neighborhood[i]);
+		contanier_current_colors.push_back({
+			cubes[swappers[i][0]]->colors[idx].first,
+			cubes[swappers[i][0]]->colors[idx].second,
+		});
 	}
 
-	groups[group_id] = update_group(groups[group_id], clockwise);
+	// Acualizamos los cube_ids en cada grupo vecino correspondiente
+	for (int i = 0; i < neighborhood.size() - 3; i++) {
 
+		// Grupo vecino al que aplicaremos el cambio
+		char group_id = neighborhood[i + 3];
+		// Obteniendo el grupo al que aplicaremos los cambios
+		group = groups[group_id];
+		std::cout << ">> Grupo al que aplicaremos el cambio: "<<  group_id << std::endl;
+		//std::cout << "   Estado actual del grupo " << group_id << ": ";
+		//for (auto i : group)
+		//	std::cout << i << " - ";
+		//std::cout << std::endl;
+		
+		// current_cube_id (Grupo Actual) reemplazara a neighbour_cube_id(Grupo vecino)
+		char current_cube_id = swappers[i][0];
+		char neighbour_cube_id = swappers[i][1];
+
+		// Buscando la posicion del elemento que cambiaremos (neighbour_cube_id)
+		std::vector<char>::iterator itr = std::find(group.begin(), group.end(), neighbour_cube_id);
+		int index = std::distance(group.begin(), itr);
+
+		// Actualizamos el cube_id en su nuevo grupo 
+		groups[group_id][index] = current_cube_id;
+
+		//std::cout << "   Pos: " << index << " Cambiaremos: " << neighbour_cube_id << " - Pondremos: " << current_cube_id << std::endl;
+		//std::cout << "   Nuevo estado del grupo " << group_id << ": ";
+		//for (auto i : groups[group_id])
+		//	std::cout << i << " - ";
+		//std::cout << std::endl;
+
+		// Actualizamos la orientacion del color ej. lado blanco(del cubo) presente en grupo UP pasa a lado blanco en el grupo BACK		
+		//std::cout << "   ANTES" << std::endl;   
+		//cubes[current_cube_id]->info();
+		int tmp = cubes[current_cube_id]->find_color_id(contanier_current_colors[i][0], contanier_current_colors[i][1]);
+		cubes[current_cube_id]->colors[tmp].second = group_id;
+
+		std::cout << "   DESPUES" << std::endl;
+		cubes[current_cube_id]->info();
+		//std::cout << "*************************************************" << std::endl;
+	}
+
+	// Actualizamos la rotacion sobre el grupo que se aplico la transformacion (group_id)	
+	group = groups[group_id];
+	groups[group_id] = update_group(group, clockwise);	
+	std::cout << "DESPUES: " << std::endl;
+	print_groups();
 }
 
 // Clokcwise -> True: sentido horario || False: Sentido Antihorario 
@@ -140,10 +173,9 @@ void RubikCube::render_transformation(GLFWwindow* window, unsigned int VBO[], un
 		glfwPollEvents();
 	}
 	// Actualizamos los grupos
-	update_groups(group_id, clockwise);
+	update_neighborhood(group_id, clockwise);
 
-	//groups[group_id] = update_group(groups[group_id], clockwise);
-	//print_rubik(true);
+	print_rubik(true);
 	
 }
 
@@ -154,7 +186,17 @@ void RubikCube::draw_cubes(unsigned int VAO[]) {
 	}
 }
 
-// Dibujar cubo en consola
+// IMPRIMIR EN CONSOLA
+void RubikCube::print_groups() {
+	for (auto iter = groups.begin(); iter != groups.end(); ++iter) {		
+		std::vector<char> current_group = iter->second;
+		std::cout << "Grupo " << iter->first << ": ";
+		for(auto i: current_group)
+			std::cout << i << " - ";
+		std::cout << std::endl;
+	}
+}
+
 void RubikCube::print(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool border, bool content) {
 	std::map<char, char*> console_color = color::console_colors;
 	for (int i = 0; i < mapper.size(); i++) {
@@ -182,7 +224,7 @@ void RubikCube::print_rubik(bool content) {
 		{mapper[6], mapper[5], mapper[4]}
 	};
 	print(top, ids, true, content);
-	/*
+	
 	std::vector<char> left = groups['L'];
 	std::vector<char> front = groups['F'];
 	std::vector<char> right = groups['R'];
@@ -194,7 +236,7 @@ void RubikCube::print_rubik(bool content) {
 		{left[6], left[5], left[4], front[6], front[5], front[4], right[6], right[5], right[4], back[6], back[5], back[4]}
 	};
 	print(mid, ids, false, content);
-
+	
 	mapper = groups['D'];
 	ids = { 'D', 'D', 'D' };
 	std::vector< std::vector<char> > down = {
@@ -204,7 +246,7 @@ void RubikCube::print_rubik(bool content) {
 	};
 	print(down, ids, true, content);
 	std::cout << "===================================================" << std::endl;
-	*/
+	
 }
 
 #endif

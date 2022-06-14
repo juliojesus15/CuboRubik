@@ -8,6 +8,7 @@ namespace group {
     typedef std::map<char, glm::vec3 > MapGroup;
     typedef std::map<char, std::vector<char> > VecGroup;
 
+    // Vec3 representa el eje donde se realizara la rotacion 
     MapGroup rotation_axis_inverted() {
         MapGroup groups;
         groups['L'] = glm::vec3(-1.0f,  0.0f,  0.0f); // Left
@@ -30,6 +31,7 @@ namespace group {
         return groups;
     }
 
+    // Vec3 representa la posicion donde se realizara la traslacion 
     MapGroup translation_pos_inverted() {
         MapGroup groups;
         groups['L'] = glm::vec3( 0.000f, -0.080f, -0.095f); // Left
@@ -52,6 +54,7 @@ namespace group {
         return groups;
     }
 
+    // Orden de los cubos asignados a cada grupo o camada en un inicio
     VecGroup default_groups() {
         VecGroup group;        
         group['R'] = { 'T', 'L', 'C', 'F', 'I', 'Q', 'Z', 'W', 'N' }; // Right
@@ -64,15 +67,27 @@ namespace group {
         return group;
     }
 
-    std::vector<char> neighborhood(char group_id) {
+    // Orden de rotacion en sentido horario
+    std::vector<char> rotation_clockwise(char group_id) {
         VecGroup group;
-        group['R'] = { 'U', 'B', 'D', 'F', 'U'};
-        group['L'] = { 'U', 'F', 'D', 'B', 'U'};
-        group['F'] = { 'U', 'R', 'D', 'L', 'U'};
-        group['B'] = { 'U', 'L', 'D', 'R', 'U'};
-        group['U'] = { 'B', 'R', 'F', 'L', 'B'}; 
-        group['D'] = { 'F', 'R', 'B', 'L', 'F'}; 
+        group['R'] = { 'U', 'U', 'U', 'B', 'B', 'B', 'D', 'D', 'D', 'F', 'F', 'F', 'U', 'U', 'U' };
+        group['L'] = { 'U', 'U', 'U', 'F', 'F', 'F', 'D', 'D', 'D', 'B', 'B', 'B', 'U', 'U', 'U' };
+        group['F'] = { 'U', 'U', 'U', 'R', 'R', 'R', 'D', 'D', 'D', 'L', 'L', 'L', 'U', 'U', 'U' };
+        group['B'] = { 'U', 'U', 'U', 'L', 'L', 'L', 'D', 'D', 'D', 'R', 'R', 'R', 'U', 'U', 'U' };
+        group['U'] = { 'B', 'B', 'B', 'R', 'R', 'R', 'F', 'F', 'F', 'L', 'L', 'L', 'B', 'B', 'B' };
+        group['D'] = { 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B', 'L', 'L', 'L', 'F', 'F', 'F' };
+        return group[group_id];
+    }
 
+    // Orden de rotacion en sentido anti horario
+    std::vector<char> rotation_inverted(char group_id) {
+        VecGroup group;
+        group['R'] = { 'U', 'U', 'U', 'F', 'F', 'F', 'D', 'D', 'D', 'B', 'B', 'B', 'U', 'U', 'U' };
+        group['L'] = { 'U', 'U', 'U', 'B', 'B', 'B', 'D', 'D', 'D', 'F', 'F', 'F', 'U', 'U', 'U' };
+        group['F'] = { 'U', 'U', 'U', 'L', 'L', 'L', 'D', 'D', 'D', 'R', 'R', 'R', 'U', 'U', 'U' };
+        group['B'] = { 'U', 'U', 'U', 'R', 'R', 'R', 'D', 'D', 'D', 'L', 'L', 'L', 'U', 'U', 'U' };
+        group['U'] = { 'F', 'F', 'F', 'R', 'R', 'R', 'B', 'B', 'B', 'L', 'L', 'L', 'F', 'F', 'F' };
+        group['D'] = { 'B', 'B', 'B', 'R', 'R', 'R', 'F', 'F', 'F', 'L', 'L', 'L', 'B', 'B', 'B' };
         return group[group_id];
     }
 }

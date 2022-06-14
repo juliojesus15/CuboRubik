@@ -19,6 +19,7 @@ public:
     Cube(char cube_id, std::vector<char> colors);
 
     char get_color_by_group(char group_id);
+    int find_color_id(char group_id);
     int find_color_id(char color_id, char group_id);
 
     void info();
@@ -63,22 +64,31 @@ Colors Cube::set_colors(std::vector<char> list_colors) {
 
 // Muestra informacion del cubo como su ID y colores
 void Cube::info() {
-    std::cout << "=============================================" << std::endl;
-    std::cout << "CUBO: " << id << std::endl;
-    std::cout << "=============================================" << std::endl;
+    std::cout << "   + CUBO: " << id << std::endl;
     for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;
-        std::cout << "Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
+        std::cout << "   + Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
     }    
+    std::cout << "=============================================" << std::endl;
+}
+
+int Cube::find_color_id(char group_id) {
+    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+        std::pair<char, char > tmp_pair = iter->second;        
+        if (tmp_pair.second == group_id) {
+            return iter->first;
+        }
+    }    
+    return 3;
 }
 
 int Cube::find_color_id(char color_id, char group_id) {
     for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
-        std::pair<char, char > tmp_pair = iter->second;        
-        if (tmp_pair.first == color_id && tmp_pair.second == group_id) {
+        std::pair<char, char > tmp_pair = iter->second;
+        if (tmp_pair.first==color_id && tmp_pair.second == group_id) {
             return iter->first;
         }
-    }    
+    }
     return 3;
 }
 
