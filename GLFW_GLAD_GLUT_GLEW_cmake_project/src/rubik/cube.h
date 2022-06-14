@@ -19,8 +19,9 @@ public:
     Cube(char cube_id, std::vector<char> colors);
 
     char get_color_by_group(char group_id);
-    Colors find_and_update_color(char current_face, char new_face);
+    int find_color_id(char color_id, char group_id);
 
+    void info();
     void translation(glm::vec3 move_to);
     void transformation(glm::vec3 r, glm::vec3 t);
 
@@ -60,16 +61,25 @@ Colors Cube::set_colors(std::vector<char> list_colors) {
     return tmp_buffer;
 }
 
-Colors Cube::find_and_update_color(char current_face, char new_face) {
-    Colors tmp_colors = colors;
-    for (auto iter = tmp_colors.begin(); iter != tmp_colors.end(); ++iter) {
+// Muestra informacion del cubo como su ID y colores
+void Cube::info() {
+    std::cout << "=============================================" << std::endl;
+    std::cout << "CUBO: " << id << std::endl;
+    std::cout << "=============================================" << std::endl;
+    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+        std::pair<char, char > tmp_pair = iter->second;
+        std::cout << "Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
+    }    
+}
+
+int Cube::find_color_id(char color_id, char group_id) {
+    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;        
-        if (tmp_pair.second == current_face) {
-            tmp_pair.second = new_face;
-            tmp_colors[iter->first] = tmp_pair;            
+        if (tmp_pair.first == color_id && tmp_pair.second == group_id) {
+            return iter->first;
         }
     }    
-    return tmp_colors;
+    return 3;
 }
 
 // Retorna el color que se esta mostrando en el grupo (group_id)

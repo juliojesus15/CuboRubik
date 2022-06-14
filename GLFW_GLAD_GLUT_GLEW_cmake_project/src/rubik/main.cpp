@@ -34,7 +34,7 @@ void draw_cubes() {
 
 int main() {
 
-    solver.get_steps(true);
+    //solver.get_steps(true);
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
