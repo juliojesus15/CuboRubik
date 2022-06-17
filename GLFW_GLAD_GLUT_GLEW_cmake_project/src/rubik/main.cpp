@@ -8,38 +8,40 @@
 #include "params.h"
 #include "rubik.h"
 #include "solver.h"
+#include "cube.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 bool firstMouse = true;
-float deltaTime = 0.0f;	
+float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 Camera camera;
-RubikCube rubik;
-Solver solverRubik;
+//RubikCube rubik;
+//Solver solverRubik;
 
-bool solver = false;
-
-// Serie de pasos para mezclar el cubo rubik
-std::vector<std::string> mix = { "D2", "R", "F", "B'", "F2", "R", "U", "B'", "L"};
-
-unsigned int VBO[params::CUBES], VAO[params::CUBES];
-
+//unsigned int VBO[params::CUBES], VAO[params::CUBES];
+/*
 void draw_cubes() {
     for (int j = 0; j < params::CUBES; j++) {
         glBindVertexArray(VAO[j]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 }
+*/
+//O W
+std::string route = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/texturas/back/";
+std::vector< std::pair <char, std::string> > features = { std::make_pair('B', "1.png") };
+std::vector< std::pair <char, std::string> > features_2 = { std::make_pair('Y', "5.png") };
+
+char id = 'A';
+Cube cube(id, features);
+Cube cube2('B', features_2);
 
 int main() {
-
-    //solver.get_steps(true);
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -62,7 +64,6 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
@@ -79,27 +80,148 @@ int main() {
     // configure params opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    
-    Shader ourShader(params::vertex_shader, params::fragment_shader);
-    
-    glGenVertexArrays(params::CUBES, VAO);
-    glGenBuffers(params::CUBES, VBO);
 
-    int i = 0;
-    for (auto iter = rubik.cubes.begin(); iter != rubik.cubes.end(); ++iter) {
-        glBindVertexArray(VAO[i]);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[i]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second->vertex.size(), static_cast<void*>(iter->second->vertex.data()), GL_STATIC_DRAW);
+    Shader ourShader(params::vertex_shader, params::fragment_shader);
+    unsigned int VBO[12], VAO[12];
+    
+    glGenVertexArrays(12, VAO);
+    glGenBuffers(12, VBO);
+
+
+    GLuint* textures = new GLuint[12];
+    glGenTextures(12, textures);
+
+    int counter = 0;
+    for (auto iter = cube.container_vertex.begin(); iter != cube.container_vertex.end(); iter++) {
+
+        char key = iter->first;
+        std::string texture_path = route;
+        if (cube.container_textures.find(key) != cube.container_textures.end()) {
+            texture_path = texture_path + cube.container_textures[key];
+            std::cout << "Key Exists!" << " - "  << key << std::endl;
+            std::cout << texture_path << std::endl;
+        }
+        else {
+            texture_path = texture_path + "null.png";
+            std::cout << "Key No Exists!" << " - " << key << std::endl;
+            std::cout <<texture_path << std::endl;
+        }
+
+        glBindVertexArray(VAO[counter]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second.size(), static_cast<void*>(iter->second.data()), GL_STATIC_DRAW);
 
         // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-
-        // color coord attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        // texture coord attribute
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
-        i++;
-    }    
+
+
+        
+        // texture 1
+        // ---------
+        //glGenTextures(1, texture1);
+        //glBindTexture(GL_TEXTURE_2D, texture1[counter]);
+        glBindTexture(GL_TEXTURE_2D, textures[counter]);
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // set texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // load image, create texture and generate mipmaps
+        int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+
+
+        
+        unsigned char* data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);
+
+        //ourShader.use();
+        //ourShader.setInt("texture1", 0);
+        std::cout << "1: " << counter << std::endl;
+        counter++;
+    }
+
+    for (auto iter = cube2.container_vertex.begin(); iter != cube2.container_vertex.end(); iter++) {
+
+        char key = iter->first;
+        std::string texture_path = route;
+        if (cube2.container_textures.find(key) != cube2.container_textures.end()) {
+            texture_path = texture_path + cube2.container_textures[key];
+            std::cout << "Key Exists!" << " - " << key << std::endl;
+            std::cout << texture_path << std::endl;
+        }
+        else {
+            texture_path = texture_path + "null.png";
+            std::cout << "Key No Exists!" << " - " << key << std::endl;
+            std::cout << texture_path << std::endl;
+        }
+
+        glBindVertexArray(VAO[counter]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second.size(), static_cast<void*>(iter->second.data()), GL_STATIC_DRAW);
+
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        // texture coord attribute
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+
+
+        // texture 1
+        // ---------
+        //glGenTextures(1, texture1);
+        //glBindTexture(GL_TEXTURE_2D, texture1[counter]);
+        glBindTexture(GL_TEXTURE_2D, textures[counter]);
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // set texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // load image, create texture and generate mipmaps
+        int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+
+
+
+        unsigned char* data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);
+        std::cout << "2: " << counter << std::endl;
+        counter++;
+    }
+
+    ourShader.use();
+    ourShader.setInt("texture1", 0);
+    
+    cube.translation(glm::vec3(-0.50f, 0.50f, -0.50f));
+    cube2.translation(glm::vec3(0.70f, 0.50f, -0.50f));
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -111,47 +233,117 @@ int main() {
         glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (solver) {
-            FaceSolver up = rubik.map_groups('U');
-            FaceSolver down = rubik.map_groups('D');
-            FaceSolver left = rubik.map_groups('L');
-            FaceSolver right = rubik.map_groups('R');
-            FaceSolver front = rubik.map_groups('F');
-            FaceSolver back = rubik.map_groups('B');
-            
-            solverRubik.set_white_face(up);
-            solverRubik.set_yellow_face(down);
-            solverRubik.set_red_face(back);
-            solverRubik.set_orange_face(front);
-            solverRubik.set_blue_face(left);
-            solverRubik.set_green_face(right);
-            
-            std::vector<std::string> steps = solverRubik.get_steps(true);
-            rubik.do_movements(window, VBO, VAO, steps);
-
-            //solverRubik.print_white_face();
-            solver = false;
-        }
+      
         
+      
         camera.update_perspective();
         camera.update_view();
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['B'].size(), static_cast<void*>(cube.container_vertex['B'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['D'].size(), static_cast<void*>(cube.container_vertex['D'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['F'].size(), static_cast<void*>(cube.container_vertex['F'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['L'].size(), static_cast<void*>(cube.container_vertex['L'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[4]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['R'].size(), static_cast<void*>(cube.container_vertex['R'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[5]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['U'].size(), static_cast<void*>(cube.container_vertex['U'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[6]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['B'].size(), static_cast<void*>(cube2.container_vertex['B'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[7]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['D'].size(), static_cast<void*>(cube2.container_vertex['D'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[8]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['F'].size(), static_cast<void*>(cube2.container_vertex['F'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[9]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['L'].size(), static_cast<void*>(cube2.container_vertex['L'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[10]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['R'].size(), static_cast<void*>(cube2.container_vertex['R'].data()), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[11]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['U'].size(), static_cast<void*>(cube2.container_vertex['U'].data()), GL_STATIC_DRAW);
+
+        
 
         ourShader.use();
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
-     
-        draw_cubes();
+
+
         
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+        glBindVertexArray(VAO[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 9);
+
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
+        glBindVertexArray(VAO[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[2]);
+        glBindVertexArray(VAO[2]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[3]);
+        glBindVertexArray(VAO[3]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        glBindTexture(GL_TEXTURE_2D, textures[4]);
+        glBindVertexArray(VAO[4]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[5]);
+        glBindVertexArray(VAO[5]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        // Otro cube
+        glBindTexture(GL_TEXTURE_2D, textures[6]);
+        glBindVertexArray(VAO[6]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[7]);
+        glBindVertexArray(VAO[7]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[8]);
+        glBindVertexArray(VAO[8]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[9]);
+        glBindVertexArray(VAO[9]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[10]);
+        glBindVertexArray(VAO[10]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glBindTexture(GL_TEXTURE_2D, textures[11]);
+        glBindVertexArray(VAO[11]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    
-    glDeleteVertexArrays(params::CUBES, VAO);
-    glDeleteBuffers(params::CUBES, VBO);
+
+    glDeleteVertexArrays(12, VAO);
+    glDeleteBuffers(12, VBO);
 
     glfwTerminate();
     return 0;
 }
+
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -165,70 +357,23 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         camera.move_left(cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        camera.move_right(cameraSpeed);    
+        camera.move_right(cameraSpeed);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {    
-    // True gira en sentido horario, Falso en sentido antihorario
-    // Grupo izquierdo
-    if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'L', true);
-    else if (key == GLFW_KEY_J && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'L', false);
-
-    // Grupo derecho
-    else if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'R', true);
-    else if (key == GLFW_KEY_L && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'R', false);
-
-    // Grupo superior
-    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'U', true);
-    else if (key == GLFW_KEY_I && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'U', false);
-
-    // Grupo inferior
-    else if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'D', true);
-    else if (key == GLFW_KEY_K && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'D', false);
-
-    // Grupo frontal
-    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'F', true);
-    else if (key == GLFW_KEY_U && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'F', false);
-
-    // Grupo posterior
-    else if (key == GLFW_KEY_E && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'B', true);
-    else if (key == GLFW_KEY_O && action == GLFW_PRESS)
-        rubik.render_transformation(window, VBO, VAO, 'B', false);
-
-
-    else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-        rubik.do_movements(window, VBO, VAO, mix);
-    else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-        solver = true;
-
-    
-}
-
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     float x_pos = static_cast<float>(xposIn);
     float y_pos = static_cast<float>(yposIn);
-    
+
     if (firstMouse) {
         camera.mouse_x = x_pos;
         camera.mouse_y = y_pos;
         firstMouse = false;
     }
-    
+
     camera.update_mouse_position(x_pos, y_pos);
     camera.update_target();
 }

@@ -8,64 +8,68 @@
 #include "value.h"
 #include "color.h"
 
-typedef std::map<int, std::pair<char, char > > Colors;
+typedef std::map< char, std::string > Texture;
+typedef std::map< int, std::pair< char, char > > Color;
+typedef std::map< char, std::vector< float > > Face;
+typedef std::pair< char, std::string > Feature;
 
 class Cube {
 public:
-    char id;        
-    Colors colors;  
-    std::vector<float> vertex;
+    char id;
+    Color container_colors;             
+    Texture container_textures;
+    Face container_vertex;
 
-    Cube(char cube_id, std::vector<char> colors);
+    Cube(char cube_id, std::vector<Feature > features);
 
-    char get_color_by_group(char group_id);
-    int find_color_id(char group_id);
-    int find_color_id(char color_id, char group_id);
+    //char get_color_by_group(char group_id);
+    //int find_color_id(char group_id);
+    //int find_color_id(char color_id, char group_id);
 
     void info();
     void translation(glm::vec3 move_to);
     void transformation(glm::vec3 r, glm::vec3 t);
 
 private:
-    Colors set_colors(std::vector<char> list_colors);
-    void update_vertex(glm::mat4 model);
+    void define_features(std::vector<Feature > features);
+    //Color set_colors(std::vector<char> list_colors);
+    //void update_vertex(glm::mat4 model);
 };
 
-Cube::Cube(char id, std::vector<char> list_colors) {
+Cube::Cube(char cube_id, std::vector<Feature > features) {    
     this->id = id;
-    this->vertex = values::vertex;
-    this->colors = set_colors(list_colors);
+
+    // Asignando a cada cara del cubo los vertices definidos en value.h
+    container_vertex['U'] = values::vertex_up_face;
+    container_vertex['D'] = values::vertex_down_face;
+    container_vertex['L'] = values::vertex_left_face;
+    container_vertex['R'] = values::vertex_right_face;
+    container_vertex['F'] = values::vertex_front_face;
+    container_vertex['B'] = values::vertex_back_face;
+
+    // Inicializando los atributos color, textura y orietancion de cada cara del cubo
+    define_features(features);    
 }
 
-// Recibe lista de colores, cada color accede a los maps definidos en color.h para obtener su indice y valor RGB
-Colors Cube::set_colors(std::vector<char> list_colors) {
-    color::MapColor color_encode = color::encode_RGB();
-    color::MapGroup group_encode = color::encode_group();    
-    Colors tmp_buffer;
+// Recibe una lista de pares <Color(Char) - Textura(String)>
+void Cube::define_features(std::vector< Feature > features) {
+    color::MapGroup group_encode = color::encode_group();
+    
+    for (int i = 0; i < features.size(); i++) {        
+        char color = features[i].first;
+        std::string texture = features[i].second;            
+        char group = group_encode[color];
 
-    for (int i = 0; i < list_colors.size(); i++) {
-        char color = list_colors[i];
-        int index = color_encode[color].first;
-        std::vector<float> RGB = color_encode[color].second;      
-
-        // Configurando el color en cada vertice
-        int from = index * 36;
-        int to = from + 36;
-        for (int j = from; j < to; j += 6) {
-            vertex[j + 3] = RGB[0];
-            vertex[j + 4] = RGB[1];
-            vertex[j + 5] = RGB[2];
-        }
-        // Guardando los ids del color
-        tmp_buffer[i] = std::pair<char, char>(color, group_encode[color]);
+        container_colors[i] = std::pair<char, char>(color, group);
+        container_textures[group] = texture;
     }
-    return tmp_buffer;
 }
 
+/*
 // Muestra informacion del cubo como su ID y colores
 void Cube::info() {
     std::cout << "   + CUBO: " << id << std::endl;
-    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;
         std::cout << "   + Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
     }    
@@ -73,7 +77,7 @@ void Cube::info() {
 }
 
 int Cube::find_color_id(char group_id) {
-    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;        
         if (tmp_pair.second == group_id) {
             return iter->first;
@@ -83,7 +87,7 @@ int Cube::find_color_id(char group_id) {
 }
 
 int Cube::find_color_id(char color_id, char group_id) {
-    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;
         if (tmp_pair.first==color_id && tmp_pair.second == group_id) {
             return iter->first;
@@ -94,7 +98,7 @@ int Cube::find_color_id(char color_id, char group_id) {
 
 // Retorna el color que se esta mostrando en el grupo (group_id)
 char Cube::get_color_by_group(char group_id) {
-    for (auto iter = colors.begin(); iter != colors.end(); ++iter) {
+    for (auto iter = container_colors.begin(); iter != colors.end(); ++iter) {
         std::pair<char, char > tmp = iter->second;
         if (tmp.second == group_id)
             return tmp.first;
@@ -121,6 +125,22 @@ void Cube::transformation(glm::vec3 axis, glm::vec3 pos) {
     glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), axis);
     model = glm::translate(model, pos);
     update_vertex(model);
+}
+*/
+
+void Cube::translation(glm::vec3 pos) {
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+
+    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
+        char key = i->first;
+        std::vector <float> value = i->second;
+        for (float j= 0; j < value.size(); j += 5) {
+            glm::vec4 result = model * glm::vec4(value[j], value[j + 1], value[j + 2], 1.0f);
+            container_vertex[key][j] = result.x;
+            container_vertex[key][j + 1] = result.y;
+            container_vertex[key][j + 2] = result.z;
+        }
+    }
 }
 
 #endif

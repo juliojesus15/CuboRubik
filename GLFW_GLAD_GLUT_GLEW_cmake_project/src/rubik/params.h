@@ -14,7 +14,7 @@ namespace params {
 
     const int CUBES = 26;
     
-    void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(40)); }
+    void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(20)); }
 
 }
 

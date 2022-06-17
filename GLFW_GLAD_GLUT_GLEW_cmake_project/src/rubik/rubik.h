@@ -23,7 +23,6 @@ public:
 
 	void render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise);
 	void do_movements(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], std::vector<std::string> steps);
-	std::vector<std::string> get_solution();
 	
 	// Solver
 	FaceSolver map_groups(char group);
@@ -42,7 +41,7 @@ private:
 	void print_content(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
 	void print_rubik(bool content);
 };
-
+/*
 RubikCube::RubikCube() {
 	std::vector<char> ids = values::cube_ids;
 	std::vector<glm::vec3> positions = values::cube_positions;
@@ -283,5 +282,5 @@ void RubikCube::print_rubik(bool content) {
 	print_content(down, ids, true, content);
 	std::cout << std::endl;	
 }
-
+*/
 #endif

@@ -11,48 +11,59 @@
 namespace values {
 
     // Vertices pre definidos 
-    std::vector<float> vertex = {
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Up (White)
+    std::vector<float> vertex_left_face = {
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    };
 
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Left (Blue)
 
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Front (Orange)
+    std::vector<float> vertex_down_face = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    };
 
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
-         0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Right (Green)
+    std::vector<float> vertex_right_face = {
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    };
 
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red) 
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red) 
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red) 
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red)
-         0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red) 
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Back (Red)
+    std::vector<float> vertex_back_face = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    };
 
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
-         0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f,  // Down (Yellow)
+    std::vector<float> vertex_front_face = {
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    };
+
+    std::vector<float> vertex_up_face = {
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     // Ids que asignaremos a cada cubo
