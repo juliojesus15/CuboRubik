@@ -12,7 +12,7 @@
 #include "solver.h"
 
 typedef std::map<char, Cube* > Cubes;
-typedef std::vector< std::vector<char> > FaceSolver;
+typedef std::vector< std::vector<char> > SolverFace;
 
 class RubikCube {
 public:	
@@ -21,7 +21,7 @@ public:
 	
 	RubikCube();	
 	void render_transformation(GLFWwindow* window, char group_id, bool clockwise);
-	void do_movements(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], std::vector<std::string> steps);
+	void do_movements(GLFWwindow* window, std::vector<std::string> steps);
 	
 	// OpenGL
 	void init_cubes();
@@ -29,7 +29,7 @@ public:
 	void delete_buffer_cubes();
 
 	// Solver
-	FaceSolver map_groups(char group);
+	SolverFace map_groups(char group);
 
 private:
 	// Transformaciones 
@@ -38,7 +38,6 @@ private:
 	void transformation(char group_id, bool clockwise);
 
 	// Consola
-	void print_groups();
 	void print_content(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
 	void print_rubik(bool content);
 };
@@ -56,7 +55,6 @@ RubikCube::RubikCube() {
 	this->groups = group::default_groups();
 	//print_rubik(false);
 }
-
 
 void RubikCube::init_cubes() {
 	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
@@ -92,7 +90,6 @@ void RubikCube::transformation(char group_id, bool clockwise) {
 	}
 }
 
-
 // Render 
 void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool clockwise) {
 	for (int i = 0; i < 9; i++) {
@@ -102,7 +99,6 @@ void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool cl
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		draw_cubes();
-
 		params::sleep();
 
 		glfwSwapBuffers(window);
@@ -111,10 +107,8 @@ void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool cl
 	// Actualizamos los grupos
 	update_neighborhood(group_id, clockwise);
 	// Print (Opcional)
-	//print_rubik(false);
-
+	print_rubik(false);
 }
-
 
 // Actualiza el grupo(camada) sobre la cual se aplico la transformacion
 std::vector<char> RubikCube::update_group(std::vector<char> to_update, bool clockwise) {
@@ -183,70 +177,55 @@ void RubikCube::update_neighborhood(char group_id, bool clockwise) {
 		int tmp = cubes[current_cube_id]->find_color(colors[i][0], colors[i][1]);
 		cubes[current_cube_id]->container_colors[tmp].second = group_id;
 	}
-
 	// Actualizamos la rotacion sobre el grupo que se aplico la transformacion (group_id)	
 	group = groups[group_id];
 	groups[group_id] = update_group(group, clockwise);
 }
 
-
-/*
-FaceSolver RubikCube::map_groups(char group_id) {
+// Solver
+SolverFace RubikCube::map_groups(char group_id) {
 	std::vector<char> group = groups[group_id];
-	FaceSolver mapper;
-	FaceSolver container = {
+	SolverFace container = {
 		{group[0], group[1], group[2]},
 		{group[7], group[8], group[3]},
 		{group[6], group[5], group[4]}
 	};
 	
+	SolverFace solver_face;
 	for (int i = 0; i < container.size(); i++) {
 		std::vector<char> row = container[i];		
 		std::vector<char> tmp = {};
 		for (int j = 0; j < row.size(); j++) {
 			char cube = row[j];			
-			char color = cubes[cube]->get_color_by_group(group_id);
+			char color = cubes[cube]->get_color(group_id);
 			tmp.push_back(color);
 		}
-		mapper.push_back(tmp);		
+		solver_face.push_back(tmp);
 	}
-	return mapper;
+	return solver_face;
 }
 
 // El vector steps contiene la lista de transformaciones que debe realizarse
-void RubikCube::do_movements(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], std::vector<std::string> steps) {
+void RubikCube::do_movements(GLFWwindow* window, std::vector<std::string> steps) {
 	group::MapMovements movements = group::movements();	
 	for (int i = 0; i < steps.size(); i++) {
-
 		std::string step = steps[i];	
 
 		std::cout << "Paso " << i + 1 << ": " << step << std::endl;
+
 		char group_id = movements[step].first;
 		bool clockwise = movements[step].second;
 		if (step[1] == '2') {						
-			render_transformation(window, VBO, VAO, group_id, clockwise);			
-			render_transformation(window, VBO, VAO, group_id, clockwise);			
+			render_transformation(window, group_id, clockwise);			
+			render_transformation(window, group_id, clockwise);			
 		}
 		else {
-			render_transformation(window, VBO, VAO, group_id, clockwise);
+			render_transformation(window, group_id, clockwise);
 		}		
 	}
 }
 
-
-
-
 // CONSOLA
-void RubikCube::print_groups() {
-	for (auto iter = groups.begin(); iter != groups.end(); ++iter) {		
-		std::vector<char> current_group = iter->second;
-		std::cout << "Grupo " << iter->first << ": ";
-		for(auto i: current_group)
-			std::cout << i << " - ";
-		std::cout << std::endl;
-	}
-}
-
 void RubikCube::print_content(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool border, bool content) {
 	std::map<char, char*> console_color = color::console_colors;
 	for (int i = 0; i < mapper.size(); i++) {
@@ -256,7 +235,7 @@ void RubikCube::print_content(std::vector< std::vector<char> > mapper, std::vect
 		for (int j = 0; j < row.size(); j++) {
 			char cube = row[j];
 			char group = group_id[j];
-			char color = cubes[cube]->get_color_by_group(group);
+			char color = cubes[cube]->get_color(group);
 			char* console = console_color[color];
 			printf(console, content ? cubes[cube]->id : color);
 		}
@@ -297,5 +276,5 @@ void RubikCube::print_rubik(bool content) {
 	print_content(down, ids, true, content);
 	std::cout << std::endl;	
 }
-*/
+
 #endif

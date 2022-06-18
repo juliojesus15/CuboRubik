@@ -35,7 +35,7 @@ public:
     void draw_GL();
     void delete_buffer_GL();
 
-    //char get_color_by_group(char group_id);
+    char get_color(char group_id);
     int find_color(char group_id);
     int find_color(char color_id, char group_id);
 
@@ -172,6 +172,15 @@ int Cube::find_color(char color_id, char group_id) {
     return 3;
 }
 
+// Retorna el color que se esta mostrando en el grupo (group_id)
+char Cube::get_color(char group_id) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
+        std::pair<char, char > tmp = iter->second;
+        if (tmp.second == group_id)
+            return tmp.first;
+    }
+    return 'X';
+}
 
 /*
 // Muestra informacion del cubo como su ID y colores
@@ -185,16 +194,6 @@ void Cube::info() {
 }
 
 
-
-// Retorna el color que se esta mostrando en el grupo (group_id)
-char Cube::get_color_by_group(char group_id) {
-    for (auto iter = container_colors.begin(); iter != colors.end(); ++iter) {
-        std::pair<char, char > tmp = iter->second;
-        if (tmp.second == group_id)
-            return tmp.first;
-    }
-    return 'X';
-}
 
 
 */

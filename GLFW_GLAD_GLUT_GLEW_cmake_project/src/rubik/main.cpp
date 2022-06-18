@@ -21,7 +21,12 @@ float lastFrame = 0.0f;
 
 Camera camera;
 RubikCube rubik;
-//Solver solverRubik;
+Solver solverRubik;
+
+bool solver = false;
+
+// Serie de pasos para mezclar el cubo rubik
+std::vector<std::string> mix = { "D2", "R", "F", "B'", "F2", "R", "U", "B'", "L" };
 
 int main() {
     // glfw: initialize and configure
@@ -85,12 +90,34 @@ int main() {
         camera.update_perspective();
         camera.update_view();
         
-        // Draw
-        rubik.draw_cubes();
+        if (solver) {
+            SolverFace up = rubik.map_groups('U');
+            SolverFace down = rubik.map_groups('D');
+            SolverFace left = rubik.map_groups('L');
+            SolverFace right = rubik.map_groups('R');
+            SolverFace front = rubik.map_groups('F');
+            SolverFace back = rubik.map_groups('B');
+
+            solverRubik.set_white_face(up);
+            solverRubik.set_yellow_face(down);
+            solverRubik.set_red_face(back);
+            solverRubik.set_orange_face(front);
+            solverRubik.set_blue_face(left);
+            solverRubik.set_green_face(right);
+
+            std::vector<std::string> steps = solverRubik.get_steps(true);
+            rubik.do_movements(window, steps);
+
+            //solverRubik.print_white_face();
+            solver = false;
+        }
 
         ourShader.use();
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
+
+        // Draw
+        rubik.draw_cubes();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -156,6 +183,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.render_transformation(window, 'B', true);
     else if (key == GLFW_KEY_O && action == GLFW_PRESS)
         rubik.render_transformation(window, 'B', false);
+
+    else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+        rubik.do_movements(window, mix);
+    else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+        solver = true;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
