@@ -23,7 +23,6 @@ Camera camera;
 RubikCube rubik;
 //Solver solverRubik;
 
-
 int main() {
     // glfw: initialize and configure
     // ------------------------------

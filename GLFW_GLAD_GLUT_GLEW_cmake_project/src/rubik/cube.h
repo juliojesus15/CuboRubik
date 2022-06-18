@@ -36,8 +36,8 @@ public:
     void delete_buffer_GL();
 
     //char get_color_by_group(char group_id);
-    //int find_color_id(char group_id);
-    //int find_color_id(char color_id, char group_id);
+    int find_color(char group_id);
+    int find_color(char color_id, char group_id);
 
     //void info();
     void translation(glm::vec3 pos);
@@ -152,6 +152,27 @@ void Cube::delete_buffer_GL() {
     glDeleteBuffers(6, VBO);
 }
 
+int Cube::find_color(char group_id) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
+        std::pair<char, char > tmp_pair = iter->second;
+        if (tmp_pair.second == group_id) {
+            return iter->first;
+        }
+    }
+    return 3;
+}
+
+int Cube::find_color(char color_id, char group_id) {
+    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
+        std::pair<char, char > tmp_pair = iter->second;
+        if (tmp_pair.first == color_id && tmp_pair.second == group_id) {
+            return iter->first;
+        }
+    }
+    return 3;
+}
+
+
 /*
 // Muestra informacion del cubo como su ID y colores
 void Cube::info() {
@@ -163,25 +184,7 @@ void Cube::info() {
     std::cout << "=============================================" << std::endl;
 }
 
-int Cube::find_color_id(char group_id) {
-    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
-        std::pair<char, char > tmp_pair = iter->second;        
-        if (tmp_pair.second == group_id) {
-            return iter->first;
-        }
-    }    
-    return 3;
-}
 
-int Cube::find_color_id(char color_id, char group_id) {
-    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
-        std::pair<char, char > tmp_pair = iter->second;
-        if (tmp_pair.first==color_id && tmp_pair.second == group_id) {
-            return iter->first;
-        }
-    }
-    return 3;
-}
 
 // Retorna el color que se esta mostrando en el grupo (group_id)
 char Cube::get_color_by_group(char group_id) {
