@@ -8,8 +8,8 @@
 #include "params.h"
 #include "rubik.h"
 #include "solver.h"
-#include "cube.h"
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -23,27 +23,6 @@ Camera camera;
 RubikCube rubik;
 //Solver solverRubik;
 
-//unsigned int VBO[params::CUBES], VAO[params::CUBES];
-/*
-void draw_cubes() {
-    for (int j = 0; j < params::CUBES; j++) {
-        glBindVertexArray(VAO[j]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-}
-*/
-//O W
-std::string route = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/texturas/back/";
-std::vector< std::pair <char, std::string> > features = {   // R
-            std::make_pair('B', "B/5.png"),
-            std::make_pair('O', "O/5.png"),
-            std::make_pair('W', "W/5.png")
-};
-std::vector< std::pair <char, std::string> > features_2 = { std::make_pair('G', "G/5.png") };
-
-char id = 'A';
-Cube cube(id, features);
-Cube cube2('B', features_2);
 
 int main() {
     // glfw: initialize and configure
@@ -66,6 +45,8 @@ int main() {
         glfwTerminate();
         return -1;
     }
+
+    glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -88,15 +69,10 @@ int main() {
     Shader ourShader(params::vertex_shader, params::fragment_shader);
 
     rubik.init_cubes();
-    //cube.init();
-    //cube2.init();
 
     ourShader.use();
     ourShader.setInt("texture1", 0);
     
-    cube.translation(glm::vec3(-0.50f, 0.50f, -0.50f));
-    cube2.translation(glm::vec3(0.70f, 0.50f, -0.50f));
-
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -104,14 +80,13 @@ int main() {
 
         processInput(window);
 
-        glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
+        glClearColor(0.078f, 0.078f, 0.078f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                    
         camera.update_perspective();
         camera.update_view();
-      
-        //cube.draw();
-        //cube2.draw();
+        
+        // Draw
         rubik.draw_cubes();
 
         ourShader.use();
@@ -122,8 +97,6 @@ int main() {
         glfwPollEvents();
     }
 
-    //cube.deleteBuffer();
-    //cube2.deleteBuffer();
     rubik.delete_buffer_cubes();
 
     glfwTerminate();
@@ -144,6 +117,46 @@ void processInput(GLFWwindow* window) {
         camera.move_left(cameraSpeed);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         camera.move_right(cameraSpeed);
+}
+
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    // True gira en sentido horario, Falso en sentido antihorario
+    // Grupo izquierdo
+    if (key == GLFW_KEY_A && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'L', true);
+    else if (key == GLFW_KEY_J && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'L', false);
+
+    // Grupo derecho
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'R', true);
+    else if (key == GLFW_KEY_L && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'R', false);
+
+    // Grupo superior
+    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'U', true);
+    else if (key == GLFW_KEY_I && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'U', false);
+
+    // Grupo inferior
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'D', true);
+    else if (key == GLFW_KEY_K && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'D', false);
+
+    // Grupo frontal
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'F', true);
+    else if (key == GLFW_KEY_U && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'F', false);
+
+    // Grupo posterior
+    else if (key == GLFW_KEY_E && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'B', true);
+    else if (key == GLFW_KEY_O && action == GLFW_PRESS)
+        rubik.render_transformation(window, 'B', false);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -167,3 +180,4 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     camera.update_fov((float)yoffset);
 }
+

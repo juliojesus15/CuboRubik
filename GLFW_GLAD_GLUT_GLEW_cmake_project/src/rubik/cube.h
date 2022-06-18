@@ -31,22 +31,21 @@ public:
     Cube(char cube_id, std::vector<Feature > features);
 
     // OpenGL
-    void init();
-    void draw();
-    void deleteBuffer();
+    void init_GL();
+    void draw_GL();
+    void delete_buffer_GL();
 
     //char get_color_by_group(char group_id);
     //int find_color_id(char group_id);
     //int find_color_id(char color_id, char group_id);
 
-    void info();
-    void translation(glm::vec3 move_to);
-    void transformation(glm::vec3 r, glm::vec3 t);
+    //void info();
+    void translation(glm::vec3 pos);
+    void transformation(glm::vec3 axis, glm::vec3 pos);
 
 private:
     void define_features(std::vector<Feature > features);
-    //Color set_colors(std::vector<char> list_colors);
-    //void update_vertex(glm::mat4 model);
+    void update_vertex(glm::mat4 model);
 };
 
 Cube::Cube(char cube_id, std::vector<Feature > features) {    
@@ -80,12 +79,11 @@ void Cube::define_features(std::vector< Feature > features) {
 }
 
 
-void Cube::init() {
+void Cube::init_GL() {
     glGenVertexArrays(6, VAO);
     glGenBuffers(6, VBO);
 
     glGenTextures(6, textures);
-
 
     int counter = 0;
     for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
@@ -97,7 +95,6 @@ void Cube::init() {
                                 : params::texture_path + "null/null.png";
 
         glBindVertexArray(VAO[counter]);
-
         glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * i->second.size(), static_cast<void*>(i->second.data()), GL_STATIC_DRAW);
 
@@ -131,12 +128,17 @@ void Cube::init() {
     }
 }
 
-void Cube::draw() {
+void Cube::draw_GL() {
     int counter = 0;
     for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
         char face_id = i->first;
         glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * container_vertex[face_id].size(), static_cast<void*>(container_vertex[face_id].data()), GL_STATIC_DRAW);
+        glBufferData(
+            GL_ARRAY_BUFFER, 
+            sizeof(float) * container_vertex[face_id].size(), 
+            static_cast<void*>(container_vertex[face_id].data()), 
+            GL_STATIC_DRAW
+        );
 
         glBindTexture(GL_TEXTURE_2D, textures[counter]);
         glBindVertexArray(VAO[counter]);
@@ -145,7 +147,7 @@ void Cube::draw() {
     }
 }
 
-void Cube::deleteBuffer() {
+void Cube::delete_buffer_GL() {
     glDeleteVertexArrays(6, VAO);
     glDeleteBuffers(6, VBO);
 }
@@ -191,13 +193,20 @@ char Cube::get_color_by_group(char group_id) {
     return 'X';
 }
 
-// Recibe una matriz de transformacion que multiplcara a cada vertice
+
+*/
+
+// Recibe una matriz de transformacion que multiplcara a cada vertice del cubo
 void Cube::update_vertex(glm::mat4 model) {
-    for (float i = 0; i < vertex.size(); i += 6) {
-        glm::vec4 result = model * glm::vec4(vertex[i], vertex[i + 1], vertex[i + 2], 1.0f);
-        vertex[i] = result.x;
-        vertex[i + 1] = result.y;
-        vertex[i + 2] = result.z;
+    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
+        char key = i->first;
+        std::vector <float> value = i->second;
+        for (float j = 0; j < value.size(); j += 5) {
+            glm::vec4 result = model * glm::vec4(value[j], value[j + 1], value[j + 2], 1.0f);
+            container_vertex[key][j] = result.x;
+            container_vertex[key][j + 1] = result.y;
+            container_vertex[key][j + 2] = result.z;
+        }
     }
 }
 
@@ -210,22 +219,6 @@ void Cube::transformation(glm::vec3 axis, glm::vec3 pos) {
     glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), axis);
     model = glm::translate(model, pos);
     update_vertex(model);
-}
-*/
-
-void Cube::translation(glm::vec3 pos) {
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
-
-    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
-        char key = i->first;
-        std::vector <float> value = i->second;
-        for (float j= 0; j < value.size(); j += 5) {
-            glm::vec4 result = model * glm::vec4(value[j], value[j + 1], value[j + 2], 1.0f);
-            container_vertex[key][j] = result.x;
-            container_vertex[key][j + 1] = result.y;
-            container_vertex[key][j + 2] = result.z;
-        }
-    }
 }
 
 #endif

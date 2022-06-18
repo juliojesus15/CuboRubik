@@ -20,7 +20,7 @@ public:
 	group::VecGroup groups;	// Contenedor de vectores con los cube_ids asignados a cada grupo(Camada) <group_id, vec(cube_ids) >	
 	
 	RubikCube();	
-	void render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise);
+	void render_transformation(GLFWwindow* window, char group_id, bool clockwise);
 	void do_movements(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], std::vector<std::string> steps);
 	
 	// OpenGL
@@ -32,7 +32,6 @@ public:
 	FaceSolver map_groups(char group);
 
 private:
-
 	// Transformaciones 
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
 	void update_neighborhood(char group_id, bool clockwise);
@@ -58,26 +57,61 @@ RubikCube::RubikCube() {
 	//print_rubik(false);
 }
 
+
 void RubikCube::init_cubes() {
 	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
 		char key = i->first;
-		cubes[key]->init();
+		cubes[key]->init_GL();
 	}
 }
 
 void RubikCube::draw_cubes() {
 	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
 		char key = i->first;
-		cubes[key]->draw();
+		cubes[key]->draw_GL();
 	}
 }
 
 void RubikCube::delete_buffer_cubes() {
 	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
 		char key = i->first;
-		cubes[key]->deleteBuffer();
+		cubes[key]->delete_buffer_GL();
 	}
 }
+
+// Clokcwise -> True: sentido horario || False: Sentido Antihorario 
+// Group_id  -> Grupo que aplicaremos la transformacíon, el caracter indica una key del map definido en group.h 
+void RubikCube::transformation(char group_id, bool clockwise) {
+	group::MapGroup axis = clockwise ? group::rotation_axis_clockwise() : group::rotation_axis_inverted();
+	group::MapGroup position = clockwise ? group::translation_pos_clockwise() : group::translation_pos_inverted();
+
+	std::vector<char> cube_ids = groups[group_id];
+	for (int i = 0; i < cube_ids.size(); i++) {
+		char key = cube_ids[i];
+		cubes[key]->transformation(axis[group_id], position[group_id]);
+	}
+}
+
+void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool clockwise) {
+	for (int i = 0; i < 9; i++) {
+		// Aplicamos las transformaciones
+		transformation(group_id, clockwise);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		draw_cubes();
+		params::sleep();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+	// Actualizamos los grupos
+	//update_neighborhood(group_id, clockwise);
+	// Print (Opcional)
+	//print_rubik(false);
+
+}
+
 /*
 FaceSolver RubikCube::map_groups(char group_id) {
 	std::vector<char> group = groups[group_id];
@@ -194,48 +228,9 @@ void RubikCube::update_neighborhood(char group_id, bool clockwise) {
 	groups[group_id] = update_group(group, clockwise);	
 }
 
-// Clokcwise -> True: sentido horario || False: Sentido Antihorario 
-// Group_id  -> Grupo que aplicaremos la transformacíon, el caracter indica una key del map definido en group.h 
-void RubikCube::transformation(char group_id, bool clockwise) {
-	group::MapGroup axis = clockwise ? group::rotation_axis_clockwise() : group::rotation_axis_inverted();
-	group::MapGroup position = clockwise ? group::translation_pos_clockwise() : group::translation_pos_inverted();
 
-	std::vector<char> cube_ids = groups[group_id];
-	for (int i = 0; i < cube_ids.size(); i++) {
-		char key = cube_ids[i];
-		cubes[key]->transformation(axis[group_id], position[group_id]);
-	}
-}
 
-//Render con OpenGL
-void RubikCube::render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise) {
-	for (int i = 0; i < 9; i++) {
-		// Aplicamos las transformaciones
-		transformation(group_id, clockwise);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		int k = 0;
-		for (auto iter = cubes.begin(); iter != cubes.end(); ++iter) {
-			glBindBuffer(GL_ARRAY_BUFFER, VBO[k]);
-			glBufferData(
-				GL_ARRAY_BUFFER,
-				sizeof(float) * iter->second->vertex.size(),
-				static_cast<void*>(iter->second->vertex.data()),
-				GL_STATIC_DRAW
-			);
-			k++;
-		}
-		draw_cubes(VAO);
-		params::sleep();
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-	// Actualizamos los grupos
-	update_neighborhood(group_id, clockwise);
-	// Print (Opcional)
-	print_rubik(false);
-	
-}
 
 void RubikCube::draw_cubes(unsigned int VAO[]) {
 	for (int j = 0; j < params::CUBES; j++) {
