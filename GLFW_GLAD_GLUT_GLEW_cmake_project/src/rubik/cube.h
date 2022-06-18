@@ -8,19 +8,32 @@
 #include "value.h"
 #include "color.h"
 
-typedef std::map< char, std::string > Texture;
 typedef std::map< int, std::pair< char, char > > Color;
 typedef std::map< char, std::vector< float > > Face;
+typedef std::map< char, std::string > Texture;
+
 typedef std::pair< char, std::string > Feature;
 
 class Cube {
 public:
     char id;
+
+    // OpenGL
+    unsigned int VBO[6];
+    unsigned int VAO[6];    
+    GLuint* textures;    
+
+    // Atributos
+    Face container_vertex;
     Color container_colors;             
     Texture container_textures;
-    Face container_vertex;
 
     Cube(char cube_id, std::vector<Feature > features);
+
+    // OpenGL
+    void init();
+    void draw();
+    void deleteBuffer();
 
     //char get_color_by_group(char group_id);
     //int find_color_id(char group_id);
@@ -38,6 +51,7 @@ private:
 
 Cube::Cube(char cube_id, std::vector<Feature > features) {    
     this->id = id;
+    textures = new GLuint[6];
 
     // Asignando a cada cara del cubo los vertices definidos en value.h
     container_vertex['U'] = values::vertex_up_face;
@@ -63,6 +77,77 @@ void Cube::define_features(std::vector< Feature > features) {
         container_colors[i] = std::pair<char, char>(color, group);
         container_textures[group] = texture;
     }
+}
+
+
+void Cube::init() {
+    glGenVertexArrays(6, VAO);
+    glGenBuffers(6, VBO);
+
+    glGenTextures(6, textures);
+
+
+    int counter = 0;
+    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
+        // Cara del cubo 
+        char key = i->first;        
+                
+        std::string texture = (container_textures.find(key) != container_textures.end()) 
+                                ? params::texture_path + container_textures[key] 
+                                : params::texture_path + "null/null.png";
+
+        glBindVertexArray(VAO[counter]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * i->second.size(), static_cast<void*>(i->second.data()), GL_STATIC_DRAW);
+
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        // texture coord attribute
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        
+        // Texturas
+        glBindTexture(GL_TEXTURE_2D, textures[counter]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(true); 
+
+        unsigned char* data = stbi_load(texture.c_str(), &width, &height, &nrChannels, 0);
+        if (data) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);                
+        counter++;
+    }
+}
+
+void Cube::draw() {
+    int counter = 0;
+    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
+        char face_id = i->first;
+        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * container_vertex[face_id].size(), static_cast<void*>(container_vertex[face_id].data()), GL_STATIC_DRAW);
+
+        glBindTexture(GL_TEXTURE_2D, textures[counter]);
+        glBindVertexArray(VAO[counter]);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        counter++;
+    }
+}
+
+void Cube::deleteBuffer() {
+    glDeleteVertexArrays(6, VAO);
+    glDeleteBuffers(6, VBO);
 }
 
 /*

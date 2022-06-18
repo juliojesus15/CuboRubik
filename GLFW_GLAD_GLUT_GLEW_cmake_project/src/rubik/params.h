@@ -12,6 +12,8 @@ namespace params {
     std::string vertex_shader = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/vertex_shader.vs";
     std::string fragment_shader = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/fragment_shader.fs";
 
+    std::string texture_path = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/texturas/";
+
     const int CUBES = 26;
     
     void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(20)); }

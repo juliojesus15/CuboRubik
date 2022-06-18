@@ -20,7 +20,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 Camera camera;
-//RubikCube rubik;
+RubikCube rubik;
 //Solver solverRubik;
 
 //unsigned int VBO[params::CUBES], VAO[params::CUBES];
@@ -34,8 +34,12 @@ void draw_cubes() {
 */
 //O W
 std::string route = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/texturas/back/";
-std::vector< std::pair <char, std::string> > features = { std::make_pair('B', "1.png") };
-std::vector< std::pair <char, std::string> > features_2 = { std::make_pair('Y', "5.png") };
+std::vector< std::pair <char, std::string> > features = {   // R
+            std::make_pair('B', "B/5.png"),
+            std::make_pair('O', "O/5.png"),
+            std::make_pair('W', "W/5.png")
+};
+std::vector< std::pair <char, std::string> > features_2 = { std::make_pair('G', "G/5.png") };
 
 char id = 'A';
 Cube cube(id, features);
@@ -82,140 +86,10 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     Shader ourShader(params::vertex_shader, params::fragment_shader);
-    unsigned int VBO[12], VAO[12];
-    
-    glGenVertexArrays(12, VAO);
-    glGenBuffers(12, VBO);
 
-
-    GLuint* textures = new GLuint[12];
-    glGenTextures(12, textures);
-
-    int counter = 0;
-    for (auto iter = cube.container_vertex.begin(); iter != cube.container_vertex.end(); iter++) {
-
-        char key = iter->first;
-        std::string texture_path = route;
-        if (cube.container_textures.find(key) != cube.container_textures.end()) {
-            texture_path = texture_path + cube.container_textures[key];
-            std::cout << "Key Exists!" << " - "  << key << std::endl;
-            std::cout << texture_path << std::endl;
-        }
-        else {
-            texture_path = texture_path + "null.png";
-            std::cout << "Key No Exists!" << " - " << key << std::endl;
-            std::cout <<texture_path << std::endl;
-        }
-
-        glBindVertexArray(VAO[counter]);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second.size(), static_cast<void*>(iter->second.data()), GL_STATIC_DRAW);
-
-        // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-        // texture coord attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-
-        
-        // texture 1
-        // ---------
-        //glGenTextures(1, texture1);
-        //glBindTexture(GL_TEXTURE_2D, texture1[counter]);
-        glBindTexture(GL_TEXTURE_2D, textures[counter]);
-        // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // load image, create texture and generate mipmaps
-        int width, height, nrChannels;
-        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-
-
-        
-        unsigned char* data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            std::cout << "Failed to load texture" << std::endl;
-        }
-        stbi_image_free(data);
-
-        //ourShader.use();
-        //ourShader.setInt("texture1", 0);
-        std::cout << "1: " << counter << std::endl;
-        counter++;
-    }
-
-    for (auto iter = cube2.container_vertex.begin(); iter != cube2.container_vertex.end(); iter++) {
-
-        char key = iter->first;
-        std::string texture_path = route;
-        if (cube2.container_textures.find(key) != cube2.container_textures.end()) {
-            texture_path = texture_path + cube2.container_textures[key];
-            std::cout << "Key Exists!" << " - " << key << std::endl;
-            std::cout << texture_path << std::endl;
-        }
-        else {
-            texture_path = texture_path + "null.png";
-            std::cout << "Key No Exists!" << " - " << key << std::endl;
-            std::cout << texture_path << std::endl;
-        }
-
-        glBindVertexArray(VAO[counter]);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[counter]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * iter->second.size(), static_cast<void*>(iter->second.data()), GL_STATIC_DRAW);
-
-        // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-        // texture coord attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-
-
-        // texture 1
-        // ---------
-        //glGenTextures(1, texture1);
-        //glBindTexture(GL_TEXTURE_2D, texture1[counter]);
-        glBindTexture(GL_TEXTURE_2D, textures[counter]);
-        // set the texture wrapping parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // set texture filtering parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // load image, create texture and generate mipmaps
-        int width, height, nrChannels;
-        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-
-
-
-        unsigned char* data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            std::cout << "Failed to load texture" << std::endl;
-        }
-        stbi_image_free(data);
-        std::cout << "2: " << counter << std::endl;
-        counter++;
-    }
+    rubik.init_cubes();
+    //cube.init();
+    //cube2.init();
 
     ourShader.use();
     ourShader.setInt("texture1", 0);
@@ -232,113 +106,25 @@ int main() {
 
         glClearColor(0.81f, 0.89f, 1.00f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-      
-        
-      
+                   
         camera.update_perspective();
         camera.update_view();
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['B'].size(), static_cast<void*>(cube.container_vertex['B'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['D'].size(), static_cast<void*>(cube.container_vertex['D'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['F'].size(), static_cast<void*>(cube.container_vertex['F'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[3]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['L'].size(), static_cast<void*>(cube.container_vertex['L'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[4]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['R'].size(), static_cast<void*>(cube.container_vertex['R'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[5]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)* cube.container_vertex['U'].size(), static_cast<void*>(cube.container_vertex['U'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[6]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['B'].size(), static_cast<void*>(cube2.container_vertex['B'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[7]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['D'].size(), static_cast<void*>(cube2.container_vertex['D'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[8]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['F'].size(), static_cast<void*>(cube2.container_vertex['F'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[9]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['L'].size(), static_cast<void*>(cube2.container_vertex['L'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[10]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['R'].size(), static_cast<void*>(cube2.container_vertex['R'].data()), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO[11]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cube2.container_vertex['U'].size(), static_cast<void*>(cube2.container_vertex['U'].data()), GL_STATIC_DRAW);
-
-        
+      
+        //cube.draw();
+        //cube2.draw();
+        rubik.draw_cubes();
 
         ourShader.use();
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
 
-
-        
-        glBindTexture(GL_TEXTURE_2D, textures[0]);
-        glBindVertexArray(VAO[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 9);
-
-        glBindTexture(GL_TEXTURE_2D, textures[1]);
-        glBindVertexArray(VAO[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[2]);
-        glBindVertexArray(VAO[2]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[3]);
-        glBindVertexArray(VAO[3]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        
-        glBindTexture(GL_TEXTURE_2D, textures[4]);
-        glBindVertexArray(VAO[4]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[5]);
-        glBindVertexArray(VAO[5]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        
-        // Otro cube
-        glBindTexture(GL_TEXTURE_2D, textures[6]);
-        glBindVertexArray(VAO[6]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[7]);
-        glBindVertexArray(VAO[7]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[8]);
-        glBindVertexArray(VAO[8]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[9]);
-        glBindVertexArray(VAO[9]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[10]);
-        glBindVertexArray(VAO[10]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        glBindTexture(GL_TEXTURE_2D, textures[11]);
-        glBindVertexArray(VAO[11]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(12, VAO);
-    glDeleteBuffers(12, VBO);
+    //cube.deleteBuffer();
+    //cube2.deleteBuffer();
+    rubik.delete_buffer_cubes();
 
     glfwTerminate();
     return 0;

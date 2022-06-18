@@ -19,17 +19,19 @@ public:
 	Cubes cubes;			// Contenedor de todos los cubos instanciados <cube_id, Cube *>
 	group::VecGroup groups;	// Contenedor de vectores con los cube_ids asignados a cada grupo(Camada) <group_id, vec(cube_ids) >	
 	
-	RubikCube();
-
+	RubikCube();	
 	void render_transformation(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], char group_id, bool clockwise);
 	void do_movements(GLFWwindow* window, unsigned int VBO[], unsigned int VAO[], std::vector<std::string> steps);
 	
+	// OpenGL
+	void init_cubes();
+	void draw_cubes();
+	void delete_buffer_cubes();
+
 	// Solver
 	FaceSolver map_groups(char group);
 
 private:
-	// OpenGL
-	void draw_cubes(unsigned int VAO[]);
 
 	// Transformaciones 
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
@@ -41,11 +43,11 @@ private:
 	void print_content(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
 	void print_rubik(bool content);
 };
-/*
+
 RubikCube::RubikCube() {
 	std::vector<char> ids = values::cube_ids;
 	std::vector<glm::vec3> positions = values::cube_positions;
-	std::vector<std::vector<char> > colors = values::cube_colors;
+	std::vector<std::vector<Feature> > colors = values::cube_features;
 
 	for (int i = 0; i < ids.size(); i++) {
 		Cube* tmp_cube = new Cube(ids[i], colors[i]);
@@ -53,9 +55,30 @@ RubikCube::RubikCube() {
 		this->cubes[ids[i]] = tmp_cube;
 	}
 	this->groups = group::default_groups();
-	print_rubik(false);
+	//print_rubik(false);
 }
 
+void RubikCube::init_cubes() {
+	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
+		char key = i->first;
+		cubes[key]->init();
+	}
+}
+
+void RubikCube::draw_cubes() {
+	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
+		char key = i->first;
+		cubes[key]->draw();
+	}
+}
+
+void RubikCube::delete_buffer_cubes() {
+	for (auto i = cubes.begin(); i != cubes.end(); ++i) {
+		char key = i->first;
+		cubes[key]->deleteBuffer();
+	}
+}
+/*
 FaceSolver RubikCube::map_groups(char group_id) {
 	std::vector<char> group = groups[group_id];
 	FaceSolver mapper;
