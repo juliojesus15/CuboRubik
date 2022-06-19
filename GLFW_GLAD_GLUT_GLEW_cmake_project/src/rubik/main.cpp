@@ -84,7 +84,7 @@ int main() {
 
         processInput(window);
 
-        glClearColor(0.078f, 0.078f, 0.078f, 1.0f);
+        glClearColor(0.933f, 0.933f, 0.933f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                    
         camera.update_perspective();

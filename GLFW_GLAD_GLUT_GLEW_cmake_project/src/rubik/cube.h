@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
+#include <typeinfo>
 
 #include "value.h"
 #include "color.h"
@@ -39,17 +40,18 @@ public:
     int find_color(char group_id);
     int find_color(char color_id, char group_id);
 
-    //void info();
+    void info();
     void translation(glm::vec3 pos);
-    void transformation(glm::vec3 axis, glm::vec3 pos);
+    void transformation(glm::vec3 axis, glm::vec3 pos, bool rounded);
 
 private:
     void define_features(std::vector<Feature > features);
     void update_vertex(glm::mat4 model);
+    void update_vertex_rounded(glm::mat4 model);
 };
 
 Cube::Cube(char cube_id, std::vector<Feature > features) {    
-    this->id = id;
+    this->id = cube_id;
     textures = new GLuint[6];
 
     // Asignando a cada cara del cubo los vertices definidos en value.h
@@ -182,24 +184,28 @@ char Cube::get_color(char group_id) {
     return 'X';
 }
 
-/*
+
 // Muestra informacion del cubo como su ID y colores
 void Cube::info() {
     std::cout << "   + CUBO: " << id << std::endl;
-    for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
-        std::pair<char, char > tmp_pair = iter->second;
-        std::cout << "   + Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
-    }    
+    //for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
+        //std::pair<char, char > tmp_pair = iter->second;
+        //std::cout << "   + Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
+    //}    
     std::cout << "=============================================" << std::endl;
+    for (auto iter = container_vertex.begin(); iter != container_vertex.end(); ++iter) {
+        std::vector<float> current_face = iter->second;
+        std::cout << "LADO: " << iter->first << std::endl;
+        for (auto i : current_face) {
+            std::cout << i << " - ";
+        }
+        std::cout << std::endl;
+        std::cout << std::endl;
+    }
 }
 
-
-
-
-*/
-
 // Recibe una matriz de transformacion que multiplcara a cada vertice del cubo
-void Cube::update_vertex(glm::mat4 model) {
+void Cube::update_vertex(glm::mat4 model) { 
     for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
         char key = i->first;
         std::vector <float> value = i->second;
@@ -212,15 +218,34 @@ void Cube::update_vertex(glm::mat4 model) {
     }
 }
 
+// Recibe una matriz de transformacion que multiplcara a cada vertice del cubo
+void Cube::update_vertex_rounded(glm::mat4 model) {
+    for (auto i = container_vertex.begin(); i != container_vertex.end(); ++i) {
+        char key = i->first;
+        std::vector <float> value = i->second;
+        for (float j = 0; j < value.size(); j += 5) {
+            glm::vec4 result = model * glm::vec4(value[j], value[j + 1], value[j + 2], 1.0f);
+            container_vertex[key][j] = glm::round(result.x);
+            container_vertex[key][j + 1] = glm::round(result.y);
+            container_vertex[key][j + 2] = glm::round(result.z);
+        }
+    }
+}
+
 void Cube::translation(glm::vec3 pos) {
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
     update_vertex(model);
 }
 
-void Cube::transformation(glm::vec3 axis, glm::vec3 pos) {
+void Cube::transformation(glm::vec3 axis, glm::vec3 pos, bool rounded) {
     glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), axis);
     model = glm::translate(model, pos);
-    update_vertex(model);
+    if (!rounded) {
+        update_vertex(model);
+    }
+    else {
+        update_vertex_rounded(model);
+    }
 }
 
 #endif

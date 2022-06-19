@@ -35,7 +35,7 @@ private:
 	// Transformaciones 
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
 	void update_neighborhood(char group_id, bool clockwise);
-	void transformation(char group_id, bool clockwise);
+	void transformation(char group_id, bool clockwise, bool rounded);
 
 	// Consola
 	void print_content(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
@@ -79,35 +79,42 @@ void RubikCube::delete_buffer_cubes() {
 
 // Clokcwise -> True: sentido horario || False: Sentido Antihorario 
 // Group_id  -> Grupo que aplicaremos la transformacíon, el caracter indica una key del map definido en group.h 
-void RubikCube::transformation(char group_id, bool clockwise) {
+void RubikCube::transformation(char group_id, bool clockwise, bool rounded) {
 	group::MapGroup axis = clockwise ? group::rotation_axis_clockwise() : group::rotation_axis_inverted();
 	group::MapGroup position = clockwise ? group::translation_pos_clockwise() : group::translation_pos_inverted();
 
 	std::vector<char> cube_ids = groups[group_id];
 	for (int i = 0; i < cube_ids.size(); i++) {
 		char key = cube_ids[i];
-		cubes[key]->transformation(axis[group_id], position[group_id]);
+		cubes[key]->transformation(axis[group_id], position[group_id], rounded);
 	}
 }
 
 // Render 
 void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool clockwise) {
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 8; i++) {
 		// Aplicamos las transformaciones
-		transformation(group_id, clockwise);
+		transformation(group_id, clockwise, false);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		draw_cubes();
 		params::sleep();
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	// Ultima rotacion
+	transformation(group_id, clockwise, true);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	draw_cubes();
+	params::sleep();
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+
 	// Actualizamos los grupos
 	update_neighborhood(group_id, clockwise);
 	// Print (Opcional)
-	print_rubik(false);
+	//print_rubik(false);
 }
 
 // Actualiza el grupo(camada) sobre la cual se aplico la transformacion

@@ -9,62 +9,61 @@
 #include <map>
 
 namespace values {
-
     typedef std::pair<char, std::string> Feature;
 
     // Vertices pre definidos 
     std::vector<float> vertex_left_face = {
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Left (Blue)
+        -0.50f, -0.50f, -0.50f, 0.0f, 0.0f, // Left (Blue)
+        -0.50f,  0.50f, -0.50f, 1.0f, 0.0f, // Left (Blue)
+        -0.50f,  0.50f, -0.50f, 1.0f, 0.0f, // Left (Blue)
+        -0.50f,  0.50f,  0.50f, 1.0f, 1.0f, // Left (Blue)
+        -0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Left (Blue)
     };
 
     std::vector<float> vertex_down_face = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Down (Yellow)
+        -0.50f, -0.50f, -0.50f, 0.0f, 0.0f, // Down (Yellow)
+         0.50f, -0.50f, -0.50f, 1.0f, 0.0f, // Down (Yellow)
+         0.50f, -0.50f, -0.50f, 1.0f, 0.0f, // Down (Yellow)
+         0.50f, -0.50f,  0.50f, 1.0f, 1.0f, // Down (Yellow)
+        -0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Down (Yellow)
     };
 
     std::vector<float> vertex_right_face = {
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Right (Green)
+        0.50f, -0.50f, -0.50f, 0.0f, 0.0f, // Right (Green)
+        0.50f,  0.50f, -0.50f, 1.0f, 0.0f, // Right (Green)
+        0.50f,  0.50f, -0.50f, 1.0f, 0.0f, // Right (Green)
+        0.50f,  0.50f,  0.50f, 1.0f, 1.0f, // Right (Green)
+        0.50f, -0.50f,  0.50f, 0.0f, 1.0f, // Right (Green)
     };
 
     std::vector<float> vertex_back_face = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.50f,  0.50f, -0.50f, 0.0f, 1.0f, // Back (Red) 
+        -0.50f, -0.50f, -0.50f, 0.0f, 0.0f, // Back (Red) 
+         0.50f, -0.50f, -0.50f, 1.0f, 0.0f, // Back (Red) 
+         0.50f, -0.50f, -0.50f, 1.0f, 0.0f, // Back (Red)
+         0.50f,  0.50f, -0.50f, 1.0f, 1.0f, // Back (Red) 
+        -0.50f,  0.50f, -0.50f, 0.0f, 1.0f, // Back (Red)
     };
 
     std::vector<float> vertex_front_face = {
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.50f,  0.50f,  0.50f, 0.0f, 1.0f, // Front (Orange)
+        -0.50f, -0.50f,  0.50f, 0.0f, 0.0f, // Front (Orange)
+         0.50f, -0.50f,  0.50f, 1.0f, 0.0f, // Front (Orange)
+         0.50f, -0.50f,  0.50f, 1.0f, 0.0f, // Front (Orange)
+         0.50f,  0.50f,  0.50f, 1.0f, 1.0f, // Front (Orange)
+        -0.50f,  0.50f,  0.50f, 0.0f, 1.0f  // Front (Orange)
     };
 
     std::vector<float> vertex_up_face = {
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.50f,  0.50f,  0.50f, 0.0f, 1.0f,   // Up (White)
+        -0.50f,  0.50f, -0.50f, 0.0f, 0.0f,   // Up (White)
+         0.50f,  0.50f, -0.50f, 1.0f, 0.0f,   // Up (White)
+         0.50f,  0.50f, -0.50f, 1.0f, 0.0f,   // Up (White)
+         0.50f,  0.50f,  0.50f, 1.0f, 1.0f,   // Up (White)
+        -0.50f,  0.50f,  0.50f, 0.0f, 1.0f,   // Up (White)
     };
 
     // Ids que asignaremos a cada cubo
@@ -191,6 +190,19 @@ namespace values {
 
     // Posicion para cada cubo, esta transformacion se aplica en el constructor del cubo rubik
     std::vector<glm::vec3> cube_positions = {
+        /*
+        glm::vec3(-0.50f,  0.50f, -0.50f), glm::vec3(0.53f,  0.50f, -0.50f), glm::vec3(1.56f,  0.50f, -0.50f),
+        glm::vec3(-0.50f, -0.53f, -0.50f), glm::vec3(0.53f, -0.53f, -0.50f), glm::vec3(1.56f, -0.53f, -0.50f),
+        glm::vec3(-0.50f, -1.56f, -0.50f), glm::vec3(0.53f, -1.56f, -0.50f), glm::vec3(1.56f, -1.56f, -0.50f),
+
+        glm::vec3(-0.50f,  0.50f,  0.53f), glm::vec3(0.53f,  0.50f,  0.53f), glm::vec3(1.56f,  0.50f,  0.53f),
+        glm::vec3(-0.50f, -0.53f,  0.53f),                                   glm::vec3(1.56f, -0.53f,  0.53f),
+        glm::vec3(-0.50f, -1.56f,  0.53f), glm::vec3(0.53f, -1.56f,  0.53f), glm::vec3(1.56f, -1.56f,  0.53f),
+
+        glm::vec3(-0.50f,  0.50f,  1.56f), glm::vec3(0.53f,  0.50f,  1.56f), glm::vec3(1.56f,  0.50f,  1.56f),
+        glm::vec3(-0.50f, -0.53f,  1.56f), glm::vec3(0.53f, -0.53f,  1.56f), glm::vec3(1.56f, -0.53f,  1.56f),
+        glm::vec3(-0.50f, -1.56f,  1.56f), glm::vec3(0.53f, -1.56f,  1.56f), glm::vec3(1.56f, -1.56f,  1.56f)
+        */
         glm::vec3(-0.50f,  0.50f, -0.50f), glm::vec3(0.50f,  0.50f, -0.50f), glm::vec3(1.50f,  0.50f, -0.50f),
         glm::vec3(-0.50f, -0.50f, -0.50f), glm::vec3(0.50f, -0.50f, -0.50f), glm::vec3(1.50f, -0.50f, -0.50f),
         glm::vec3(-0.50f, -1.50f, -0.50f), glm::vec3(0.50f, -1.50f, -0.50f), glm::vec3(1.50f, -1.50f, -0.50f),
@@ -202,6 +214,7 @@ namespace values {
         glm::vec3(-0.50f,  0.50f,  1.50f), glm::vec3(0.50f,  0.50f,  1.50f), glm::vec3(1.50f,  0.50f,  1.50f),
         glm::vec3(-0.50f, -0.50f,  1.50f), glm::vec3(0.50f, -0.50f,  1.50f), glm::vec3(1.50f, -0.50f,  1.50f),
         glm::vec3(-0.50f, -1.50f,  1.50f), glm::vec3(0.50f, -1.50f,  1.50f), glm::vec3(1.50f, -1.50f,  1.50f)
+        
     };
 
 }
