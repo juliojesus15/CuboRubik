@@ -91,7 +91,7 @@ void RubikCube::transformation(char group_id, bool clockwise, bool rounded) {
 }
 
 // Render 
-void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool clockwise) {
+void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool clockwise) {	
 	for (int i = 0; i < 8; i++) {
 		// Aplicamos las transformaciones
 		transformation(group_id, clockwise, false);
@@ -110,7 +110,8 @@ void RubikCube::render_transformation(GLFWwindow* window, char group_id, bool cl
 	params::sleep();
 	glfwSwapBuffers(window);
 	glfwPollEvents();
-
+	
+	
 	// Actualizamos los grupos
 	update_neighborhood(group_id, clockwise);
 	// Print (Opcional)

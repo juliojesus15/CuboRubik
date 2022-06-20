@@ -27,6 +27,28 @@ bool solver = false;
 
 // Serie de pasos para mezclar el cubo rubik
 std::vector<std::string> mix = { "D2", "R", "F", "B'", "F2", "R", "U", "B'", "L" };
+std::vector<std::string> sol = { 
+    "R2", "U'", "R'", "U'", "R", "U", "R", "U", "R", "U'", "R",
+    "R2", "U'", "R'", "U'", "R", "U", "R", "U", "R", "U'", "R",
+    "R2", "U'", "R'", "U'", "R", "U", "R", "U", "R", "U'", "R" 
+};
+
+std::vector<std::string> sol2 = {
+    "D2", "F'", "D'", "F'", "D", "F", "D", "F", "D", "F'", "D",
+    "D2", "F'", "D'", "F'", "D", "F", "D", "F", "D", "F'", "D",
+    "D2", "F'", "D'", "F'", "D", "F", "D", "F", "D", "F'", "D"
+};
+
+std::vector<std::string> sol3 = {
+    "L2", "B'", "L'", "B'", "L", "B", "L", "B", "L", "B'", "L",
+    "L2", "B'", "L'", "B'", "L", "B", "L", "B", "L", "B'", "L",
+    "L2", "B'", "L'", "B'", "L", "B", "L", "B", "L", "B'", "L"
+};
+
+std::vector<std::string> sol4 = {
+    "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B"
+};
+
 
 int main() {
     // glfw: initialize and configure
@@ -91,6 +113,8 @@ int main() {
         camera.update_view();
         
         if (solver) {
+            //std::cout << "ANTES: " << std::endl;
+            //rubik.cubes['V']->info();
             SolverFace up = rubik.map_groups('U');
             SolverFace down = rubik.map_groups('D');
             SolverFace left = rubik.map_groups('L');
@@ -107,7 +131,10 @@ int main() {
 
             std::vector<std::string> steps = solverRubik.get_steps(true);
             rubik.do_movements(window, steps);
-
+            //std::cout << "DESOUES: " << std::endl;
+            //rubik.cubes['V']->info();
+            //rubik.cubes['V']->rotation(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f);
+            //rubik.cubes['N']->rotation(glm::vec3(1.0f, 0.0f, 0.0f), 90.0f);
             //solverRubik.print_white_face();
             solver = false;
         }
@@ -188,6 +215,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.do_movements(window, mix);
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
         solver = true;
+    else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        rubik.do_movements(window, sol);
+        rubik.do_movements(window, sol2);
+        rubik.do_movements(window, sol3);
+        rubik.do_movements(window, sol4);
+    }
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {

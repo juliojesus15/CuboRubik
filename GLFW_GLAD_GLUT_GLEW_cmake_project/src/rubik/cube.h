@@ -35,6 +35,7 @@ public:
     void init_GL();
     void draw_GL();
     void delete_buffer_GL();
+    void reset();
 
     char get_color(char group_id);
     int find_color(char group_id);
@@ -42,6 +43,7 @@ public:
 
     void info();
     void translation(glm::vec3 pos);
+    void rotation(glm::vec3 axis, float angle);
     void transformation(glm::vec3 axis, glm::vec3 pos, bool rounded);
 
 private:
@@ -154,6 +156,29 @@ void Cube::delete_buffer_GL() {
     glDeleteBuffers(6, VBO);
 }
 
+void Cube::reset() {
+    // Asignando a cada cara del cubo los vertices definidos en value.h
+    //params::texture_path
+    glBindTexture(GL_TEXTURE_2D, textures[2]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
+    std::string reset_img = params::texture_path + "O/5.png";
+    unsigned char* data = stbi_load(reset_img.c_str(), &width, &height, &nrChannels, 0);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+}
+
 int Cube::find_color(char group_id) {
     for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
         std::pair<char, char > tmp_pair = iter->second;
@@ -196,11 +221,11 @@ void Cube::info() {
     for (auto iter = container_vertex.begin(); iter != container_vertex.end(); ++iter) {
         std::vector<float> current_face = iter->second;
         std::cout << "LADO: " << iter->first << std::endl;
-        for (auto i : current_face) {
-            std::cout << i << " - ";
+        std::vector<float> tmp = container_vertex[iter->first];
+        for (int i = 0; i < tmp.size(); i+=5) {
+            std::cout << "Vertice (" << tmp[i] << " , " << tmp[i + 1] << " , " << tmp[i + 2];
+            std::cout << " <=> Textura (" << tmp[i + 3] << " , " << tmp[i + 4] << ")" << std::endl;
         }
-        std::cout << std::endl;
-        std::cout << std::endl;
     }
 }
 
@@ -234,6 +259,12 @@ void Cube::update_vertex_rounded(glm::mat4 model) {
 
 void Cube::translation(glm::vec3 pos) {
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
+    update_vertex(model);
+}
+
+void Cube::rotation(glm::vec3 axis, float angle) {    
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+    model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 0.0f));
     update_vertex(model);
 }
 
