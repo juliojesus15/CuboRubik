@@ -190,7 +190,7 @@ namespace values {
 
     // Posicion para cada cubo, esta transformacion se aplica en el constructor del cubo rubik
     std::vector<glm::vec3> cube_positions = {
-        glm::vec3(-0.50f,  0.50f, -0.50f), glm::vec3(0.50f,  0.50f, -0.50f), glm::vec3(1.50f,  0.50f, -0.50f),
+        glm::vec3(-0.50f,  0.50f, -0.50f), glm::vec3(0.50f,  0.50f, -0.50f), glm::vec3(1.50f,  0.50f, -0.50f),        
         glm::vec3(-0.50f, -0.50f, -0.50f), glm::vec3(0.50f, -0.50f, -0.50f), glm::vec3(1.50f, -0.50f, -0.50f),
         glm::vec3(-0.50f, -1.50f, -0.50f), glm::vec3(0.50f, -1.50f, -0.50f), glm::vec3(1.50f, -1.50f, -0.50f),
 

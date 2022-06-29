@@ -10,7 +10,10 @@
 #include "group.h"
 #include "params.h"
 #include "solver.h"
+#include "animation_values.h"
 
+typedef std::vector<glm::vec3>VecVertex;
+typedef std::vector<char> VecChar;
 typedef std::map<char, Cube* > Cubes;
 typedef std::vector< std::vector<char> > SolverFace;
 
@@ -21,6 +24,7 @@ public:
 	
 	RubikCube();	
 	void render_transformation(GLFWwindow* window, char group_id, bool clockwise);
+	void render_animation_1(GLFWwindow* window);
 	void do_movements(GLFWwindow* window, std::vector<std::string> steps);
 	
 	// OpenGL
@@ -31,11 +35,19 @@ public:
 	// Solver
 	SolverFace map_groups(char group);
 
+	// Animaciones
+	void animacion_1(VecVertex borders_position, VecVertex corner_position, VecVertex center_position, 
+					 VecChar centers,VecChar borders, VecChar corners);
+	
 private:
 	// Transformaciones 
 	std::vector<char> update_group(std::vector<char> to_update, bool clockwise);
 	void update_neighborhood(char group_id, bool clockwise);
 	void transformation(char group_id, bool clockwise, bool rounded);
+
+	VecChar get_corners();
+	VecChar get_borders();
+	VecChar get_centers();
 
 	// Consola
 	void print_content(std::vector< std::vector<char> > mapper, std::vector<char> ids, bool border, bool content);
@@ -233,7 +245,102 @@ void RubikCube::do_movements(GLFWwindow* window, std::vector<std::string> steps)
 	}
 }
 
-// CONSOLA
+
+/*
+	* FUNCIONES PARA ANIMACION 1 *
+*/
+void RubikCube::animacion_1( VecVertex borders_position, 
+							 VecVertex corner_position, 
+							 VecVertex center_position,
+							 VecChar centers, 
+							 VecChar borders, 
+							 VecChar corners) {
+					
+	for (auto i = 0; i < centers.size(); i++) {
+		char cube_id = centers[i];
+		cubes[cube_id]->translation(center_position[i]);
+	}
+
+	for (auto i = 0; i < borders.size(); i++) {
+		char cube_id = borders[i];
+		cubes[cube_id]->translation(borders_position[i]);
+	}
+
+	for (auto i = 0; i < corners.size(); i++) {
+		char cube_id = corners[i];
+		cubes[cube_id]->translation(corner_position[i]);
+	}
+}
+
+void RubikCube::render_animation_1(GLFWwindow* window) {
+	float size = 0.1;
+	VecVertex borders_position = animation_values::get_border_position(size, true);
+	VecVertex corner_position = animation_values::get_corner_position(size, true);
+	VecVertex center_position = animation_values::get_center_position(size, true);
+
+	VecChar centers = get_centers();
+	VecChar corners = get_corners();
+	VecChar borders = get_borders();
+
+	for (int i = 0; i < 15; i++) {				
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		animacion_1(borders_position, corner_position, center_position, centers, borders, corners);
+		draw_cubes();
+		params::sleep();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	borders_position = animation_values::get_border_position(size, false);
+	corner_position = animation_values::get_corner_position(size, false);
+	center_position = animation_values::get_center_position(size, false);
+
+	for (int i = 0; i < 15; i++) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		animacion_1(borders_position, corner_position, center_position, centers, borders, corners);
+		draw_cubes();
+		params::sleep();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+VecChar RubikCube::get_corners() {
+	VecChar corners = {
+		groups['F'][0], groups['F'][2],
+		groups['F'][4], groups['F'][6],
+		groups['B'][0], groups['B'][2],
+		groups['B'][4], groups['B'][6]
+	};
+	return corners;
+}
+VecChar RubikCube::get_borders() {
+	VecChar borders = {
+		groups['F'][1], groups['F'][3],
+		groups['F'][5], groups['F'][7],
+		groups['B'][1], groups['B'][3],
+		groups['B'][5], groups['B'][7],
+		groups['L'][1], groups['L'][5],
+		groups['R'][1], groups['R'][5]
+	};
+	return borders;
+}
+VecChar RubikCube::get_centers() {
+	VecChar centers = {
+		groups['F'][8], groups['B'][8],
+		groups['R'][8], groups['L'][8],
+		groups['U'][8], groups['D'][8]
+	};
+	return centers;
+}
+
+/* 
+	* FUNCIONES PARA IMPRIMIR EN CONSOLA * 
+*/
 void RubikCube::print_content(std::vector< std::vector<char> > mapper, std::vector<char> group_id, bool border, bool content) {
 	std::map<char, char*> console_color = color::console_colors;
 	for (int i = 0; i < mapper.size(); i++) {

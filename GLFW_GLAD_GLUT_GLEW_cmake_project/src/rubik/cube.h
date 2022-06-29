@@ -46,6 +46,9 @@ public:
     void rotation(glm::vec3 axis, float angle);
     void transformation(glm::vec3 axis, glm::vec3 pos, bool rounded);
 
+    // Animaciones
+    void animation_1(glm::vec3 pos);
+
 private:
     void define_features(std::vector<Feature > features);
     void update_vertex(glm::mat4 model);

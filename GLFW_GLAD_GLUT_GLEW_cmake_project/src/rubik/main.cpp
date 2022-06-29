@@ -26,7 +26,11 @@ Solver solverRubik;
 bool solver = false;
 
 // Serie de pasos para mezclar el cubo rubik
-std::vector<std::string> mix = { "D2", "R", "F", "B'", "F2", "R", "U", "B'", "L" };
+std::vector<std::string> mix = { 
+    "D2", "R", "F", "B'", "F2", 
+    "R" , "U", "B'", "L" 
+};
+
 std::vector<std::string> sol = { 
     "R2", "U'", "R'", "U'", "R", "U", "R", "U", "R", "U'", "R",
     "R2", "U'", "R'", "U'", "R", "U", "R", "U", "R", "U'", "R",
@@ -46,7 +50,11 @@ std::vector<std::string> sol3 = {
 };
 
 std::vector<std::string> sol4 = {
-    "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B", "L", "B", "L'", "B"
+    "L", "B", "L'", "B", 
+    "L", "B", "L'", "B", 
+    "L", "B", "L'", "B", 
+    "L", "B", "L'", "B", 
+    "L", "B", "L'", "B"
 };
 
 
@@ -221,6 +229,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.do_movements(window, sol3);
         rubik.do_movements(window, sol4);
     }
+    else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {        
+        rubik.render_animation_1(window);
+    }
+    
 
 }
 
