@@ -1,23 +1,17 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <vector>
 #include <map>
 
 namespace color {    
-    typedef std::map<char, char> MapGroup;
-
-    // Definimos la relacion color - grupo
-    MapGroup encode_group() {
-        MapGroup group;
-        group['W'] = 'U'; // White  - Up
-        group['B'] = 'L'; // Blue   - Left
-        group['O'] = 'F'; // Orange - Front
-        group['G'] = 'R'; // Green  - Right
-        group['R'] = 'B'; // Red    - Back
-        group['Y'] = 'D'; // Yellow - Down
-        return group;
-    }
+    std::map<char, char> encode_color = {
+        {'W','U'},  // White  - Up
+        {'B','L'},  // Blue   - Left
+        {'O','F'},  // Orange - Front
+        {'G','R'},  // Green  - Right
+        {'R','B'},  // Red    - Back
+        {'Y','D'}   // Yellow - Down
+    };
 
     //Fuente: https://stackoverflow.com/questions/4053837/colorizing-text-in-the-console-with-c
     std::map<char, char*> console_colors = {

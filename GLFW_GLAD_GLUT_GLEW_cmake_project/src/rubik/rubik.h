@@ -37,7 +37,7 @@ public:
 
 	// Animaciones
 	void animacion_1(VecVertex borders_position, VecVertex corner_position, VecVertex center_position, 
-					 VecChar centers,VecChar borders, VecChar corners);
+					 VecChar centers,VecChar borders, VecChar corners, bool scale, bool rounded);
 	
 private:
 	// Transformaciones 
@@ -61,7 +61,7 @@ RubikCube::RubikCube() {
 
 	for (int i = 0; i < ids.size(); i++) {
 		Cube* tmp_cube = new Cube(ids[i], colors[i]);
-		tmp_cube->translation(positions[i]);
+		tmp_cube->transformation_t(positions[i]);
 		this->cubes[ids[i]] = tmp_cube;
 	}
 	this->groups = group::default_groups();
@@ -98,7 +98,7 @@ void RubikCube::transformation(char group_id, bool clockwise, bool rounded) {
 	std::vector<char> cube_ids = groups[group_id];
 	for (int i = 0; i < cube_ids.size(); i++) {
 		char key = cube_ids[i];
-		cubes[key]->transformation(axis[group_id], position[group_id], rounded);
+		cubes[key]->transformation_rt(axis[group_id], position[group_id], rounded);
 	}
 }
 
@@ -254,21 +254,24 @@ void RubikCube::animacion_1( VecVertex borders_position,
 							 VecVertex center_position,
 							 VecChar centers, 
 							 VecChar borders, 
-							 VecChar corners) {
+							 VecChar corners,
+							 bool scale,
+							 bool rounded ) {
 					
+	float threshold = 0.05f;
 	for (auto i = 0; i < centers.size(); i++) {
 		char cube_id = centers[i];
-		cubes[cube_id]->translation(center_position[i]);
+		cubes[cube_id]->transformation_ts(center_position[i], threshold, scale, rounded);
 	}
 
 	for (auto i = 0; i < borders.size(); i++) {
 		char cube_id = borders[i];
-		cubes[cube_id]->translation(borders_position[i]);
+		cubes[cube_id]->transformation_ts(borders_position[i], threshold, scale, rounded);
 	}
 
 	for (auto i = 0; i < corners.size(); i++) {
 		char cube_id = corners[i];
-		cubes[cube_id]->translation(corner_position[i]);
+		cubes[cube_id]->transformation_ts(corner_position[i], threshold, scale, rounded);
 	}
 }
 
@@ -282,31 +285,43 @@ void RubikCube::render_animation_1(GLFWwindow* window) {
 	VecChar corners = get_corners();
 	VecChar borders = get_borders();
 
-	for (int i = 0; i < 15; i++) {				
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		animacion_1(borders_position, corner_position, center_position, centers, borders, corners);
+	for (int i = 0; i < 9; i++) {				
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
+		animacion_1(borders_position, corner_position, center_position, centers, borders, corners, true, false);
 		draw_cubes();
 		params::sleep();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	animacion_1(borders_position, corner_position, center_position, centers, borders, corners, true, true);
+	draw_cubes();
+	params::sleep();
+
+	glfwSwapBuffers(window);
+	glfwPollEvents();
 
 	borders_position = animation_values::get_border_position(size, false);
 	corner_position = animation_values::get_corner_position(size, false);
 	center_position = animation_values::get_center_position(size, false);
 
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 9; i++) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		animacion_1(borders_position, corner_position, center_position, centers, borders, corners);
+		animacion_1(borders_position, corner_position, center_position, centers, borders, corners, false, false);
 		draw_cubes();
 		params::sleep();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	animacion_1(borders_position, corner_position, center_position, centers, borders, corners, true, true);
+	draw_cubes();
+	params::sleep();
+
+	glfwSwapBuffers(window);
+	glfwPollEvents();
 }
 
 VecChar RubikCube::get_corners() {

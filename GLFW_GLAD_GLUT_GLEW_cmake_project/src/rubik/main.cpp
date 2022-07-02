@@ -159,7 +159,8 @@ int main() {
     }
 
     rubik.delete_buffer_cubes();
-
+    
+    // glfw: borrando todos los recursos GLFW previamente asignados.
     glfwTerminate();
     return 0;
 }
@@ -231,6 +232,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {        
         rubik.render_animation_1(window);
+        //rubik.cubes['S']->transformation_ts(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.5, 1.5, 1.5));
     }
     
 
