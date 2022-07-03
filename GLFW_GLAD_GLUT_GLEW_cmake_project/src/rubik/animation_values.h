@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace animation_values {
+namespace animation {
 	typedef std::vector<glm::vec3>VecVertex;	
 
 	VecVertex get_corner_position(float scala, bool orientation) {

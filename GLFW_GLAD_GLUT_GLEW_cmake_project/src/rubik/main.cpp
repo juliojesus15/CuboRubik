@@ -54,13 +54,14 @@ std::vector<std::string> sol4 = {
     "L", "B", "L'", "B", 
     "L", "B", "L'", "B", 
     "L", "B", "L'", "B", 
-    "L", "B", "L'", "B"
+    "L", "B", "L'", "B"    
 };
 
 
 int main() {
     // glfw: initialize and configure
     // ------------------------------
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -115,47 +116,31 @@ int main() {
         processInput(window);
 
         glClearColor(0.933f, 0.933f, 0.933f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                    
         camera.update_perspective();
         camera.update_view();
         
         if (solver) {
-            //std::cout << "ANTES: " << std::endl;
-            //rubik.cubes['V']->info();
-            SolverFace up = rubik.map_groups('U');
-            SolverFace down = rubik.map_groups('D');
-            SolverFace left = rubik.map_groups('L');
-            SolverFace right = rubik.map_groups('R');
-            SolverFace front = rubik.map_groups('F');
-            SolverFace back = rubik.map_groups('B');
+            SolverInput input = rubik.map_groups();
 
-            solverRubik.set_white_face(up);
-            solverRubik.set_yellow_face(down);
-            solverRubik.set_red_face(back);
-            solverRubik.set_orange_face(front);
-            solverRubik.set_blue_face(left);
-            solverRubik.set_green_face(right);
+            solverRubik.set_white_face(input['U']);
+            solverRubik.set_yellow_face(input['D']);
+            solverRubik.set_red_face(input['B']);
+            solverRubik.set_orange_face(input['F']);
+            solverRubik.set_blue_face(input['L']);
+            solverRubik.set_green_face(input['R']);
 
             std::vector<std::string> steps = solverRubik.get_steps(true);
             rubik.do_movements(window, steps);
-            //std::cout << "DESOUES: " << std::endl;
-            //rubik.cubes['V']->info();
-            //rubik.cubes['V']->rotation(glm::vec3(0.0f, 0.0f, 1.0f), 90.0f);
-            //rubik.cubes['N']->rotation(glm::vec3(1.0f, 0.0f, 0.0f), 90.0f);
-            //solverRubik.print_white_face();
             solver = false;
         }
 
         ourShader.use();
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
-
+       
         // Draw
-        rubik.draw_cubes();
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        rubik.draw_cubes(window);        
     }
 
     rubik.delete_buffer_cubes();
@@ -186,39 +171,39 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     // True gira en sentido horario, Falso en sentido antihorario
     // Grupo izquierdo
     if (key == GLFW_KEY_A && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'L', true);
+        rubik.render_move_group(window, 'L', true);
     else if (key == GLFW_KEY_J && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'L', false);
+        rubik.render_move_group(window, 'L', false);
 
     // Grupo derecho
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'R', true);
+        rubik.render_move_group(window, 'R', true);
     else if (key == GLFW_KEY_L && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'R', false);
+        rubik.render_move_group(window, 'R', false);
 
     // Grupo superior
     else if (key == GLFW_KEY_W && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'U', true);
+        rubik.render_move_group(window, 'U', true);
     else if (key == GLFW_KEY_I && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'U', false);
+        rubik.render_move_group(window, 'U', false);
 
     // Grupo inferior
     else if (key == GLFW_KEY_S && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'D', true);
+        rubik.render_move_group(window, 'D', true);
     else if (key == GLFW_KEY_K && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'D', false);
+        rubik.render_move_group(window, 'D', false);
 
     // Grupo frontal
     else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'F', true);
+        rubik.render_move_group(window, 'F', true);
     else if (key == GLFW_KEY_U && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'F', false);
+        rubik.render_move_group(window, 'F', false);
 
     // Grupo posterior
     else if (key == GLFW_KEY_E && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'B', true);
+        rubik.render_move_group(window, 'B', true);
     else if (key == GLFW_KEY_O && action == GLFW_PRESS)
-        rubik.render_transformation(window, 'B', false);
+        rubik.render_move_group(window, 'B', false);
 
     else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         rubik.do_movements(window, mix);

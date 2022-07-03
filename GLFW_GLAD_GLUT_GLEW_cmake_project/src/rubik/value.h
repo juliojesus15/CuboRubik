@@ -3,6 +3,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/random.hpp>
 #include <glm/glm.hpp>
 
 #include <vector>
@@ -201,6 +202,49 @@ namespace values {
         glm::vec3(-0.50f,  0.50f,  1.50f), glm::vec3(0.50f,  0.50f,  1.50f), glm::vec3(1.50f,  0.50f,  1.50f),
         glm::vec3(-0.50f, -0.50f,  1.50f), glm::vec3(0.50f, -0.50f,  1.50f), glm::vec3(1.50f, -0.50f,  1.50f),
         glm::vec3(-0.50f, -1.50f,  1.50f), glm::vec3(0.50f, -1.50f,  1.50f), glm::vec3(1.50f, -1.50f,  1.50f)        
+    };
+
+    //glm::linearRand(-1.0f, 1.0f)
+
+    std::vector<glm::vec3> random_cube_positions(float deep, float min, float max) {
+        std::vector<glm::vec3> random_position = {
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+        };
+        return random_position;
     };
 
 }
