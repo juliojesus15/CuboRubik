@@ -210,8 +210,6 @@ namespace values {
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
-            //glm::vec3(0.50f, 0.50f, -0.50f),
-            //glm::vec3(1.50f, 0.50f, -0.50f),            
 
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),

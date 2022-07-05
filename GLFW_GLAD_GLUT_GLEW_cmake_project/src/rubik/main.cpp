@@ -24,6 +24,11 @@ RubikCube rubik;
 Solver solverRubik;
 
 bool solver = false;
+bool control_animation1 = true;
+bool control_animation2 = false;
+
+// Camera
+bool cam_rotation = false;
 
 // Serie de pasos para mezclar el cubo rubik
 std::vector<std::string> mix = { 
@@ -54,9 +59,36 @@ std::vector<std::string> sol4 = {
     "L", "B", "L'", "B", 
     "L", "B", "L'", "B", 
     "L", "B", "L'", "B", 
-    "L", "B", "L'", "B"    
+    "L", "B", "L'", "B" 
 };
 
+void control_keys() {
+    std::cout << "  * Controles: " << std::endl;
+    std::cout << "  Rotacion sentido horario: " << std::endl;
+    std::cout << "  KEY_A: LEFT           KEY_W: UP          KEY_F: FRONT" << std::endl;
+    std::cout << "  KEY_D: RIGHT          KEY_S: DOWN        KEY_D: BACK" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  Rotacion sentido anti horario: " << std::endl;
+    std::cout << "  KEY_J: LEFT           KEY_I: UP          KEY_U: FRONT" << std::endl;
+    std::cout << "  KEY_L: RIGHT          KEY_K: DOWN        KEY_O: BACK" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  * Solver: " << std::endl;
+    std::cout << "  KEY_1: Mezclar        KEY_2: Resolver" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  * Animaciones: " << std::endl;
+    std::cout << "  KEY_4: Animacion1     KEY_5: Animacion2" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  * Camara(Desplazamiento): " << std::endl;
+    std::cout << "  KEY_UP: Arriba        KEY_DOWN: Abajo" << std::endl;
+    std::cout << "  KEY_LEFT: Izquierda   KEY_RIGHT: Derecha" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  * Camara(Rotaciones): " << std::endl;
+    std::cout << "  KEY_6: Enable / Disable" << std::endl;    
+    std::cout << std::endl;
+    std::cout << "  * Otros: " << std::endl;
+    std::cout << "  KEY_9: Info           KEY_0: Imprimir" << std::endl;
+    std::cout << std::endl;
+}
 
 int main() {
     // glfw: initialize and configure
@@ -108,6 +140,7 @@ int main() {
     ourShader.use();
     ourShader.setInt("texture1", 0);
     
+    control_keys();
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -119,6 +152,10 @@ int main() {
                    
         camera.update_perspective();
         camera.update_view();
+
+        if (cam_rotation) {
+            camera.rotation(deltaTime);
+        }
         
         if (solver) {
             SolverInput input = rubik.map_groups();
@@ -168,6 +205,7 @@ void processInput(GLFWwindow* window) {
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+ 
     // True gira en sentido horario, Falso en sentido antihorario
     // Grupo izquierdo
     if (key == GLFW_KEY_A && action == GLFW_PRESS)
@@ -201,26 +239,58 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     // Grupo posterior
     else if (key == GLFW_KEY_E && action == GLFW_PRESS)
-        rubik.render_move_group(window, 'B', true);
+        rubik.render_move_group(window, 'B', true);    
     else if (key == GLFW_KEY_O && action == GLFW_PRESS)
         rubik.render_move_group(window, 'B', false);
 
     else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         rubik.do_movements(window, mix);
+    
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
         solver = true;
+
     else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
         rubik.do_movements(window, sol);
         rubik.do_movements(window, sol2);
         rubik.do_movements(window, sol3);
         rubik.do_movements(window, sol4);
     }
-    else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {        
-        rubik.render_animation_1(window);     
+
+    else if (key == GLFW_KEY_4 && action == GLFW_PRESS && control_animation1) {
+        if (control_animation2 == true) {
+            control_animation1 = false;
+            rubik.render_animation_1(window);
+            control_animation1 = true;
+        }
+        else {
+            std::cout << "Asegurese de que el cubo este construido o presione 5" << std::endl;
+        }
     }
-    else if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
-        rubik.render_animation_2(window);
+    
+    else if (key == GLFW_KEY_5 && action == GLFW_PRESS) {        
+        if (control_animation2 == false) {
+            rubik.render_animation_2(window);
+            control_animation2 = true;
+        }
+        else {
+            std::cout << "El cubo ya fue construido" << std::endl;
+        }
     }
+
+    else if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
+        cam_rotation = !cam_rotation;
+    }
+    
+    else if (key == GLFW_KEY_9 && action == GLFW_PRESS) 
+        control_keys();
+
+    else if (key == GLFW_KEY_0 && action == GLFW_PRESS) {        
+        if (control_animation2 == true)
+            rubik.print_rubik(false);
+        else
+            std::cout << "Asegurese de que el cubo este construido o presione 5" << std::endl;
+    }
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {

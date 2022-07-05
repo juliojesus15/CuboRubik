@@ -51,6 +51,8 @@ public:
 	void render_animation_1(GLFWwindow* window);
 	void render_animation_2(GLFWwindow* window);
 
+	//Consola
+	void print_rubik(bool content);
 private:
 	// Camadas*
 	VecChar update_group(VecChar to_update, bool clockwise);
@@ -70,7 +72,6 @@ private:
 
 	// Consola
 	void print_content(std::vector< VecChar > mapper, VecChar ids, bool border, bool content);
-	void print_rubik(bool content);
 };
 
 RubikCube::RubikCube() {		
@@ -85,7 +86,6 @@ RubikCube::RubikCube() {
 		this->cubes[ids[i]] = tmp_cube;
 	}
 	this->groups = group::default_groups;
-	print_rubik(false);
 }
 
 /* 

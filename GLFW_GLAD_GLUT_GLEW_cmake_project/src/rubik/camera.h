@@ -30,6 +30,8 @@ public:
 	void move_left(float speed);
 	void move_right(float speed);
 
+	void rotation(float speed);
+
 private:
 	glm::vec3 camera_pos;
 	glm::vec3 camera_target;
@@ -102,5 +104,14 @@ void Camera::move_left(float speed) {
 void Camera::move_right(float speed) {	
 	this->camera_pos += glm::normalize(glm::cross(camera_target, camera_up)) * speed;
 }
+
+// Rotaciones
+void Camera::rotation(float speed) {
+	float radius = 10.0f;
+	float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+	float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+	this->view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
 
 #endif
