@@ -216,11 +216,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         rubik.do_movements(window, sol4);
     }
     else if (key == GLFW_KEY_4 && action == GLFW_PRESS) {        
-        rubik.render_animation_1(window);
-        //rubik.cubes['S']->transformation_ts(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.5, 1.5, 1.5));
+        rubik.render_animation_1(window);     
     }
-    
-
+    else if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+        rubik.render_animation_2(window);
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {

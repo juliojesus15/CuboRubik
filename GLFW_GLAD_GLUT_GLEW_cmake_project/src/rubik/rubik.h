@@ -4,6 +4,10 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <thread>
+
+#include <glm/glm.hpp>
+#include <glm/gtx/io.hpp>
 
 #include "value.h"
 #include "cube.h"
@@ -11,6 +15,9 @@
 #include "params.h"
 #include "solver.h"
 #include "animation_values.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 typedef std::vector< char > VecChar;
 typedef std::vector< glm::vec3 > VecVertex;
@@ -42,6 +49,7 @@ public:
 	// Animaciones
 	void render_move_group(GLFWwindow* window, char group_id, bool clockwise);
 	void render_animation_1(GLFWwindow* window);
+	void render_animation_2(GLFWwindow* window);
 
 private:
 	// Camadas*
@@ -50,12 +58,13 @@ private:
 	bool compute_move_group(glm::vec3 axis, glm::vec3 position, char group_id, bool rounded);
 
 	// Animaciones
-	void compute_animacion_1(VecVertex borders_pos, VecVertex corner_pos, VecVertex center_pos, bool scale, bool rounded);
+	void compute_animation_1(VecVertex borders_pos, VecVertex corner_pos, VecVertex center_pos, bool scale, bool rounded);	
 
 	// Utils* 
 	void set_corners();
 	void set_borders();
 	void set_centers();
+	VecChar get_cubes();
 	std::vector< VecChar > swappers_clockwise(char group_id);
 	std::vector< VecChar > swappers_inverted(char group_id);
 
@@ -66,7 +75,8 @@ private:
 
 RubikCube::RubikCube() {		
 	std::vector<char> ids = values::cube_ids;
-	std::vector<glm::vec3> positions = values::random_cube_positions(-3.0f, -10.0f, 10.0f);
+	std::vector<glm::vec3> positions = values::random_cube_positions(-5.0f, -10.0f, 10.0f);
+	//std::vector<glm::vec3> positions = values::cube_positions;
 	std::vector<std::vector<Feature> > colors = values::cube_features;
 
 	for (int i = 0; i < ids.size(); i++) {
@@ -135,7 +145,7 @@ void RubikCube::print_rubik(bool content) {
 // Animacion1*
 // -------------------------------------------------------------------------------
 
-void RubikCube::compute_animacion_1(VecVertex borders_pos, VecVertex corner_pos, VecVertex center_pos, bool scale, bool rounded) {
+void RubikCube::compute_animation_1(VecVertex borders_pos, VecVertex corner_pos, VecVertex center_pos, bool scale, bool rounded) {
 	float threshold = 0.05f;
 	for (auto i = 0; i < centers.size(); i++) {
 		char cube_id = centers[i];
@@ -164,10 +174,10 @@ void RubikCube::render_animation_1(GLFWwindow* window) {
 	set_centers();
 
 	for (int i = 0; i < 9; i++) {
-		compute_animacion_1(borders_pos, corner_pos, center_pos, true, false);
+		compute_animation_1(borders_pos, corner_pos, center_pos, true, false);
 		draw_cubes(window);
 	}
-	compute_animacion_1(borders_pos, corner_pos, center_pos, true, true);
+	compute_animation_1(borders_pos, corner_pos, center_pos, true, true);
 	draw_cubes(window);
 
 	borders_pos = animation::get_border_position(size, false);
@@ -175,11 +185,39 @@ void RubikCube::render_animation_1(GLFWwindow* window) {
 	center_pos = animation::get_center_position(size, false);
 
 	for (int i = 0; i < 9; i++) {
-		compute_animacion_1(borders_pos, corner_pos, center_pos, false, false);
+		compute_animation_1(borders_pos, corner_pos, center_pos, false, false);
 		draw_cubes(window);
 	}
-	compute_animacion_1(borders_pos, corner_pos, center_pos, true, true);
+	compute_animation_1(borders_pos, corner_pos, center_pos, true, true);
 	draw_cubes(window);
+}
+
+
+// Animacion2*
+// -------------------------------------------------------------------------------
+
+void RubikCube::render_animation_2(GLFWwindow* window) {
+	VecChar first_block = get_cubes();
+	//VecChar first_block = {'A'};
+	for (auto i = 0; i < first_block.size(); i++) {
+		float t = 0.1;
+		char key = first_block[i];
+		float x = cubes[key]->container_vertex['L'][5];
+		float y = cubes[key]->container_vertex['L'][6];
+		float z = cubes[key]->container_vertex['L'][7];
+
+		glm::vec3 from = glm::vec3(x, y, z);
+		glm::vec3 to = values::pos_targets[key];
+
+		glm::vec3 v = to - from;
+		glm::vec3 l = (t * v) + from;
+
+		glm::vec3 target = l - from;	
+		for (int j = 0; j < 10; j++) {
+			cubes[key]->transformation_t(target);
+			draw_cubes(window);
+		}
+	}
 }
 
 
@@ -408,4 +446,12 @@ std::vector< VecChar > RubikCube::swappers_inverted(char group_id) {
 	return container;
 };
 
+VecChar RubikCube::get_cubes() {
+	VecChar container = groups['U'];
+	VecChar mid = { 'D', 'E', 'F', 'M', 'N', 'U', 'V', 'W' };
+	VecChar bottom = groups['D'];
+	container.insert(container.end(), std::begin(mid), std::end(mid));
+	container.insert(container.end(), std::begin(bottom), std::end(bottom));
+	return container;
+}
 #endif

@@ -14,7 +14,7 @@ namespace params {
 
     std::string texture_path = "C:/Users/Equipo/Documents/CuboRubik/GLFW_GLAD_GLUT_GLEW_cmake_project/src/rubik/texturas/";
     
-    void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+    void sleep() { std::this_thread::sleep_for(std::chrono::milliseconds(20)); }
 }
 
 #endif

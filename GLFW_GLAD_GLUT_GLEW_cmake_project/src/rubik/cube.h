@@ -40,10 +40,33 @@ public:
     void transformation_ts(glm::vec3 pos, float threshold, bool dir, bool rounded);
     void transformation_rt(glm::vec3 axis, glm::vec3 pos, bool rounded);
 
-    // Metodos usado para actualizar las camadas e imprimir en consola 
+    // Metodos usado para actualizar las camadas
     char get_color(char face);
     int find_color(char group_id);
     int find_color(char color_id, char group_id);
+
+    void info() {
+        std::cout << "   + CUBO: " << id << std::endl;
+        //for (auto iter = container_colors.begin(); iter != container_colors.end(); ++iter) {
+            //std::pair<char, char > tmp_pair = iter->second;
+            //std::cout << "   + Color: " << tmp_pair.first << " - " << " Posicion: " << tmp_pair.second << std::endl;
+        //}    
+        std::cout << "=============================================" << std::endl;
+        for (auto iter = container_vertex.begin(); iter != container_vertex.end(); ++iter) {
+            std::vector<float> current_face = iter->second;
+            if (iter->first == 'L') {
+                std::cout << "LADO: " << iter->first << std::endl;
+                std::vector<float> tmp = container_vertex[iter->first];
+                std::cout << "Vertice (" << tmp[5] << " , " << tmp[6] << " , " << tmp[7] << " )" << std::endl;
+            }
+            //std::vector<float> tmp = container_vertex[iter->first];
+            /*for (int i = 0; i < tmp.size(); i += 5) {
+                if(iter->first == 'L')
+                    std::cout << "Vertice (" << tmp[i] << " , " << tmp[i + 1] << " , " << tmp[i + 2] << " )" << std::endl;
+                //std::cout << " <=> Textura (" << tmp[i + 3] << " , " << tmp[i + 4] << ")" << std::endl;
+            }*/
+        }
+    }
 
 private:
     void set_features(std::vector<Feature > features);

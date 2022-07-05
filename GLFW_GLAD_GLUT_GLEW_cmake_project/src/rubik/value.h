@@ -10,7 +10,7 @@
 #include <map>
 
 namespace values {
-    typedef std::pair<char, std::string> Feature;
+    typedef std::pair<char, std::string> Feature;    
 
     // Vertices pre definidos 
     std::vector<float> vertex_left_face = {
@@ -205,12 +205,13 @@ namespace values {
     };
 
     //glm::linearRand(-1.0f, 1.0f)
-
     std::vector<glm::vec3> random_cube_positions(float deep, float min, float max) {
-        std::vector<glm::vec3> random_position = {
+        std::vector<glm::vec3> random_position = {            
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
+            //glm::vec3(0.50f, 0.50f, -0.50f),
+            //glm::vec3(1.50f, 0.50f, -0.50f),            
 
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
             glm::vec3(glm::linearRand(min, max), deep, glm::linearRand(min, max)),
@@ -247,6 +248,19 @@ namespace values {
         return random_position;
     };
 
+    std::map<char, glm::vec3> pos_targets = {
+        {'A', glm::vec3(-1 ,  0 , -1)}, {'B', glm::vec3( 0 ,  0 , -1)}, {'C', glm::vec3( 1 ,  0 , -1)},
+        {'D', glm::vec3(-1 , -1 , -1)}, {'E', glm::vec3( 0 , -1 , -1)}, {'F', glm::vec3( 1 , -1 , -1)},
+        {'G', glm::vec3(-1 , -2 , -1)}, {'H', glm::vec3( 0 , -2 , -1)}, {'I', glm::vec3( 1 , -2 , -1)},
+        
+        {'J', glm::vec3(-1 ,  0 ,  0)}, {'K', glm::vec3( 0 ,  0 ,  0)}, {'L', glm::vec3( 1 ,  0 , 0)},
+        {'M', glm::vec3(-1 , -1 ,  0)},                                 {'N', glm::vec3( 1 , -1 , 0)},
+        {'O', glm::vec3(-1 , -2 ,  0)}, {'P', glm::vec3( 0 , -2 ,  0)}, {'Q', glm::vec3( 1 , -2 , 0)},
+         
+        {'R', glm::vec3(-1 ,  0 ,  1)}, {'S', glm::vec3( 0 ,  0 ,  1)}, {'T', glm::vec3( 1 ,  0 , 1)},
+        {'U', glm::vec3(-1 , -1 ,  1)}, {'V', glm::vec3( 0 , -1 ,  1)}, {'W', glm::vec3( 1 , -1 , 1)},
+        {'X', glm::vec3(-1 , -2 ,  1)}, {'Y', glm::vec3( 0 , -2 ,  1)}, {'Z', glm::vec3( 1 , -2 , 1)}
+    };
 }
 
 #endif
